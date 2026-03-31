@@ -8,6 +8,7 @@ import { db } from './db';
 import type { User } from './types';
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  trustHost: true,
   providers: [
     Credentials({
       name: 'Credentials',
