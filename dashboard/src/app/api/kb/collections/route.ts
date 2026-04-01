@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { execSync } from 'child_process';
+import { execFileSync } from 'child_process';
 import path from 'path';
 import { getCTXRoot, getFrameworkRoot } from '@/lib/config';
 
@@ -50,8 +50,10 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const cmd = `bash '${scriptPath.replace(/'/g, "'\\''")}' --org '${org.replace(/'/g, "'\\''")}' --instance '${instanceId.replace(/'/g, "'\\''")}' 2>/dev/null`;
-    const rawOut = execSync(cmd, { timeout: 15000, env: env as NodeJS.ProcessEnv });
+    const rawOut = execFileSync('bash', [scriptPath, '--org', org, '--instance', instanceId], {
+      timeout: 15000,
+      env: env as NodeJS.ProcessEnv,
+    });
     const stdout = Buffer.isBuffer(rawOut) ? rawOut.toString('utf8') : String(rawOut);
 
     // Parse tabular output: "collection_name  N"
@@ -79,6 +81,6 @@ export async function GET(request: NextRequest) {
       return Response.json({ collections: [], org });
     }
     console.error('[api/kb/collections] Error:', message);
-    return Response.json({ error: 'Failed to list collections', details: message }, { status: 500 });
+    return Response.json({ error: 'Failed to list collections' }, { status: 500 });
   }
 }
