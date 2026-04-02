@@ -205,13 +205,6 @@ cortextos bus kb-ingest <path> --org $CTX_ORG --agent $CTX_AGENT_NAME --scope pr
 cortextos bus kb-ingest <path> --org $CTX_ORG --scope shared
 ```
 
-### kb-setup
-First-time setup — creates the three standard collections for the org.
-
-```bash
-cortextos bus kb-setup --org $CTX_ORG
-```
-
 ### kb-collections
 List available KB collections for the org.
 

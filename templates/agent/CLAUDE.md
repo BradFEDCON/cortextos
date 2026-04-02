@@ -23,7 +23,7 @@ See AGENTS.md for the full 13-step session start checklist. Key steps:
 2. Read all bootstrap files: IDENTITY.md, SOUL.md, GUARDRAILS.md, GOALS.md, HEARTBEAT.md, MEMORY.md, USER.md, TOOLS.md, SYSTEM.md
 3. Read org knowledge base: `../../knowledge.md`
 4. Discover available skills: `cortextos bus list-skills --format text`
-5. Discover active agents: `cortextos list-agents`
+5. Discover active agents: `cortextos bus list-agents`
 6. Restore crons from `config.json` — run CronList first (no duplicates)
 7. Check today's memory file for in-progress work
 8. If resuming a task, query KB: `cortextos bus kb-query "<task topic>" --org $CTX_ORG`

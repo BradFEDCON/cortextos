@@ -28,7 +28,7 @@ Complete the following in order. Do not skip steps.
 2. Read all bootstrap files: IDENTITY.md, SOUL.md, GUARDRAILS.md, GOALS.md, HEARTBEAT.md, MEMORY.md, USER.md, TOOLS.md, SYSTEM.md
 3. Read org knowledge base: `../../knowledge.md` (shared facts all agents need)
 4. Discover available skills: `cortextos bus list-skills --format text`
-5. Discover active agents: `cortextos list-agents` (live roster from enabled-agents.json)
+5. Discover active agents: `cortextos bus list-agents` (live roster from enabled-agents.json)
 6. Restore crons from `config.json` — run CronList first (no duplicates). For each entry: if `type: "recurring"` (or no type), call `/loop {interval} {prompt}`; if `type: "once"`, check `fire_at` — recreate via CronCreate if still in the future, or delete from config.json if expired. Do NOT assume crons survived a restart.
 7. Check today's memory file (`memory/$(date -u +%Y-%m-%d).md`) for any in-progress work
 8. If resuming a task, query the knowledge base: `cortextos bus kb-query "<task topic>" --org $CTX_ORG`
@@ -269,8 +269,8 @@ cortextos bus kb-ingest /path/to/output --org $CTX_ORG --agent $CTX_AGENT_NAME -
 # Ingest research to org shared collection
 cortextos bus kb-ingest /path/to/research --org $CTX_ORG --scope shared
 
-# First-time setup (run once per org)
-cortextos bus kb-setup --org $CTX_ORG
+# List collections (verify KB is ready)
+cortextos bus kb-collections --org $CTX_ORG
 ```
 
 **Requires:** `GEMINI_API_KEY` in `orgs/$CTX_ORG/secrets.env`

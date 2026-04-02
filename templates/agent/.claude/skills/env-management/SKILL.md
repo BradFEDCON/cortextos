@@ -42,7 +42,7 @@ echo 'NEW_KEY=value' >> "$ORG_ENV"
 chmod 600 "$ORG_ENV"
 
 # 3. Restart all running agents so they pick it up
-cortextos list-agents --format json | jq -r '.[].name' | while read agent; do
+cortextos bus list-agents --format json | jq -r '.[].name' | while read agent; do
   echo "Restarting $agent..."
   cortextos bus send-message "$agent" high "hard-restart" "new shared secret added: NEW_KEY"
   sleep 10
@@ -107,7 +107,7 @@ ORG_ENV="$CTX_FRAMEWORK_ROOT/orgs/$CTX_ORG/secrets.env"
 # Update the value in the file (edit KEY_NAME line)
 
 # Restart all agents in sequence (stagger to avoid gaps)
-cortextos list-agents --format json | jq -r '.[].name' | while read agent; do
+cortextos bus list-agents --format json | jq -r '.[].name' | while read agent; do
   echo "Restarting $agent..."
   cortextos bus send-message "$agent" high "hard-restart" "secret rotation: KEY_NAME"
   sleep 30
