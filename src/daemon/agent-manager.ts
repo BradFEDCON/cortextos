@@ -8,6 +8,7 @@ import { TelegramPoller } from '../telegram/poller.js';
 import { resolvePaths } from '../utils/paths.js';
 import { resolveEnv } from '../utils/env.js';
 import { logInboundMessage, cacheLastSent, logOutboundMessage } from '../telegram/logging.js';
+import { collectTelegramCommands, registerTelegramCommands } from '../bus/metrics.js';
 
 /**
  * Manages all agents in a cortextOS instance.
@@ -74,13 +75,14 @@ export class AgentManager {
     let telegramApi: TelegramAPI | undefined;
     let chatId: string | undefined;
     let allowedUserId: string | undefined;
+    let botToken: string | undefined;
 
     if (existsSync(agentEnvFile)) {
       const envContent = readFileSync(agentEnvFile, 'utf-8');
       const botTokenMatch = envContent.match(/^BOT_TOKEN=(.+)$/m);
       const chatIdMatch = envContent.match(/^CHAT_ID=(.+)$/m);
       const allowedUserMatch = envContent.match(/^ALLOWED_USER=(.+)$/m);
-      const botToken = botTokenMatch?.[1]?.trim();
+      botToken = botTokenMatch?.[1]?.trim();
       chatId = chatIdMatch?.[1]?.trim();
       allowedUserId = allowedUserMatch?.[1]?.trim() || undefined;
 
@@ -102,6 +104,17 @@ export class AgentManager {
     checker.start().catch(err => {
       console.error(`[${name}] Fast checker error:`, err);
     });
+
+    // Register Telegram slash commands at startup (fix for issue #1)
+    if (telegramApi && botToken) {
+      const scanDirs = [agentDir, this.frameworkRoot].filter(Boolean);
+      const commands = collectTelegramCommands(scanDirs);
+      registerTelegramCommands(botToken, commands).then((result) => {
+        if (result.status === 'ok') {
+          log(`Telegram commands registered (${result.count} commands)`);
+        }
+      }).catch(() => { /* non-fatal */ });
+    }
 
     // Start Telegram poller if credentials are available
     if (telegramApi && chatId) {
