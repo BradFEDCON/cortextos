@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { execSync } from 'child_process';
+import { execFileSync } from 'child_process';
 import path from 'path';
 import { getCTXRoot, getFrameworkRoot } from '@/lib/config';
 
@@ -119,11 +119,10 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // Build the command string safely (args are controlled by our own code)
-    // Redirect stderr to /dev/null to suppress Python FutureWarnings from output capture
-    const quotedArgs = args.map(a => `'${a.replace(/'/g, "'\\''")}'`).join(' ');
-    const cmd = `bash '${scriptPath.replace(/'/g, "'\\''")}' ${quotedArgs} 2>/dev/null`;
-    const rawOut = execSync(cmd, { timeout: 30000, env: env as NodeJS.ProcessEnv });
+    const rawOut = execFileSync('bash', [scriptPath, ...args], {
+      timeout: 30000,
+      env: env as NodeJS.ProcessEnv,
+    });
     const stdout = Buffer.isBuffer(rawOut) ? rawOut.toString('utf8') : String(rawOut);
 
     // mmrag.py --json outputs JSON (pretty-printed, multi-line).
@@ -179,6 +178,6 @@ export async function GET(request: NextRequest) {
       return Response.json({ results: [], total: 0, query: q, collection: `shared-${org}` });
     }
     console.error('[api/kb/search] Error:', message);
-    return Response.json({ error: 'Knowledge base query failed', details: message }, { status: 500 });
+    return Response.json({ error: 'Knowledge base query failed' }, { status: 500 });
   }
 }
