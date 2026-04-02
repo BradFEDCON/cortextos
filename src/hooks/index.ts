@@ -5,6 +5,7 @@
 
 import { readFileSync, existsSync, watch, statSync, unlinkSync, mkdirSync } from 'fs';
 import { join } from 'path';
+import { homedir } from 'os';
 import * as crypto from 'crypto';
 
 /**
@@ -46,7 +47,7 @@ export function loadEnv(): {
   ctxRoot: string;
 } {
   const agentName = process.env.CTX_AGENT_NAME || require('path').basename(process.cwd());
-  const ctxRoot = process.env.CTX_ROOT || join(process.env.HOME || '', '.cortextos', 'default');
+  const ctxRoot = process.env.CTX_ROOT || join(homedir(), '.cortextos', 'default');
   const stateDir = join(ctxRoot, 'state', agentName);
 
   // Try to load .env file

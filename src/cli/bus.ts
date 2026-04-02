@@ -14,6 +14,7 @@ import { createApproval, updateApproval } from '../bus/approval.js';
 import { queryKnowledgeBase, ingestKnowledgeBase, ensureKBDirs } from '../bus/knowledge-base.js';
 import { resolvePaths } from '../utils/paths.js';
 import { resolveEnv } from '../utils/env.js';
+import { IPCClient } from '../daemon/ipc-server.js';
 import { TelegramAPI } from '../telegram/api.js';
 import { logOutboundMessage, cacheLastSent } from '../telegram/logging.js';
 import type { Priority, TaskStatus, EventCategory, EventSeverity, ApprovalCategory, ApprovalStatus } from '../types/index.js';
@@ -862,10 +863,10 @@ busCommand
   .option('--org <org>', 'Filter by organization')
   .option('--status <filter>', 'Filter by status: running|all', 'all')
   .option('--format <fmt>', 'Output format: json|text', 'json')
-  .action((opts: { org?: string; status?: string; format?: string }) => {
+  .action(async (opts: { org?: string; status?: string; format?: string }) => {
     const { existsSync, readdirSync, readFileSync } = require('fs');
     const { join } = require('path');
-    const { execSync } = require('child_process');
+    const { spawnSync: _spawnSync } = require('child_process');
     const env = resolveEnv();
     const ctxRoot = require('path').join(require('os').homedir(), '.cortextos', env.instanceId);
     const frameworkRoot = env.frameworkRoot || process.cwd();
@@ -895,20 +896,35 @@ busCommand
       }
     }
 
+    // Determine running agents: prefer IPC daemon (cross-platform) over tmux (Unix-only bash fallback).
+    const runningAgents = new Set<string>();
+    const ipc = new IPCClient(env.instanceId);
+    try {
+      const resp = await ipc.send({ type: 'status' });
+      if (resp.success && Array.isArray(resp.data)) {
+        for (const a of resp.data as Array<{ name: string; status: string }>) {
+          if (a.status === 'running') runningAgents.add(a.name);
+        }
+      }
+    } catch {
+      // Daemon not running — fall back to tmux check (bash daemon / Unix only)
+      if (process.platform !== 'win32') {
+        for (const name of Object.keys(agentMap)) {
+          const info = agentMap[name];
+          const tmuxName = info.org
+            ? `ctx-${env.instanceId}-${info.org}-${name}`
+            : `ctx-${env.instanceId}-${name}`;
+          const r = _spawnSync('tmux', ['has-session', '-t', tmuxName], { stdio: 'ignore' });
+          if (r.status === 0) runningAgents.add(name);
+        }
+      }
+    }
+
     const results = [];
     for (const [name, info] of Object.entries(agentMap)) {
       if (opts.org && info.org !== opts.org) continue;
 
-      // Check if tmux session is running
-      const tmuxName = info.org
-        ? `ctx-${env.instanceId}-${info.org}-${name}`
-        : `ctx-${env.instanceId}-${name}`;
-      let running = false;
-      try {
-        execSync(`tmux has-session -t "${tmuxName}"`, { stdio: 'ignore' });
-        running = true;
-      } catch { /* not running */ }
-
+      const running = runningAgents.has(name);
       if (opts.status === 'running' && !running) continue;
 
       // Read role from IDENTITY.md

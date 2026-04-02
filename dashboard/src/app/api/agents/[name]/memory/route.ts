@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import fs from 'fs/promises';
 import path from 'path';
+import { homedir } from 'os';
 import { getAgentDir, getOrgs, getAgentsForOrg } from '@/lib/config';
 
 export const dynamic = 'force-dynamic';
@@ -27,7 +28,7 @@ export async function GET(
 
     // Security (C3): Confine path reads to this agent's own directory.
     // path.resolve() neutralizes any ../ traversal before startsWith comparison.
-    const frameworkRoot = process.env.CTX_FRAMEWORK_ROOT ?? process.env.HOME ?? '';
+    const frameworkRoot = process.env.CTX_FRAMEWORK_ROOT ?? homedir();
     const orgName = searchParams.get('org') ?? 'lifeos';
     const agentDir = path.resolve(frameworkRoot, 'orgs', orgName, 'agents', decoded);
     const resolved = path.resolve(agentDir, filePath);
