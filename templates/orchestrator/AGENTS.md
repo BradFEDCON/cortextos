@@ -46,7 +46,17 @@ Run these steps before any restart (hard or soft) and on context exhaustion.
 
 1. Write final memory checkpoint to daily memory:
    ```bash
-   echo "## Session End - $(date -u +%H:%M:%S UTC)\n- Status: [done/interrupted]\n- WORKING ON: [task or 'nothing']\n- Next: [what to pick up next session]" >> memory/$(date -u +%Y-%m-%d).md
+   TODAY=$(date -u +%Y-%m-%d)
+   cat >> "memory/$TODAY.md" << MEMEOF
+
+## Session End - $(date -u +%H:%M:%S UTC)
+- Status: [done/interrupted/context-full]
+- Current state: [where things stand — specific enough that the next session can resume cold]
+- Active threads: [anything in progress or mid-task with current state]
+- Key decisions: [significant decisions from this session worth carrying forward]
+- For next session: [what to do first and what context is needed]
+
+MEMEOF
    ```
 2. Update heartbeat: `cortextos bus update-heartbeat "restarting"`
 3. Log session end: `cortextos bus log-event action session_end info --meta '{"agent":"'$CTX_AGENT_NAME'","reason":"[why]"}'`
@@ -166,46 +176,48 @@ You have three memory layers. Think of them like human memory: working memory fo
 
 ### Layer 1: Daily Memory — Working Memory (memory/YYYY-MM-DD.md)
 
-This is your session journal. It is what lets you resume exactly where you left off after a crash or restart. Writing to it is cheap (a single bash append, no context cost) — the key is writing at the right moments, not obsessively during continuous work.
+This is your session journal. It survives crashes and context compactions. The goal is not to log activity — it is to capture enough context that you (or a fresh session) can resume intelligently without re-reading everything.
 
 **Write at these checkpoints — not continuously:**
-- **Session start**: status, crons active, what you are resuming
-- **Task start**: `WORKING ON: task_id - title` before you begin
-- **Task complete**: `COMPLETED: task_id - what was produced`
-- **Heartbeat cycle**: flush anything else (messages handled, decisions made, crons fired)
-- **Session end**: what is in-progress, what to pick up next
+- **Session start**: where things stand, what you are resuming and why
+- **Heartbeat cycle**: state snapshot — current focus, active threads, decisions, context notes
+- **Session end**: full context dump so the next session can pick up cold
 
-During a continuous task, just work. One WORKING ON entry is enough. Log the details at the next natural pause.
+Each entry should answer: **"if my context was wiped right now, what would I need to know to resume intelligently?"**
+
+**Mid-work inline notes — write immediately, don't wait for heartbeat:**
+```bash
+echo "NOTE $(date -u +%H:%M UTC): <key decision / discovery / user preference / non-obvious thing>" >> "memory/$TODAY.md"
+```
+Use this when: you make a significant decision, learn something about the user, hit a non-obvious situation, or encounter anything you would want the next session to know. One line is enough. The heartbeat is for structured summaries — inline notes capture the moment.
 
 ```bash
 TODAY=$(date -u +%Y-%m-%d)
 mkdir -p memory
 cat >> "memory/$TODAY.md" << MEMEOF
 
-## Session Start - $(date -u +%H:%M:%S)
+## Session Start - $(date -u +%H:%M:%S UTC)
 - Status: online
 - Crons active: <list from CronList>
 - Inbox: <N messages or "empty">
-- Resuming: <task id + description or "nothing">
+- Current state: <where things stand — what is in progress, pending, or needs attention>
+- Resuming: <what to do next and why, with enough context to act without re-reading everything>
 
 MEMEOF
 ```
 
 Entry formats:
 ```
-WORKING ON: task_123 - Build landing page
-
-COMPLETED: task_123 - Landing page built, committed abc1234, deployed to staging
-
-## Heartbeat - HH:MM
-- Handled: <message summary>
-- Decision: <key decision and reasoning>
-- Crons: <which fired, what they did>
-- Next: <what you are doing now>
+## Heartbeat - HH:MM UTC
+- Current focus: <what I am working on and why>
+- Active threads: <anything in progress or being monitored — state of each>
+- Key decisions: <decisions made since last entry with brief rationale>
+- Context notes: <anything non-obvious — user preferences discovered, environment state, blockers>
+- Next: <what I am doing next>
 ```
 
-CONSEQUENCE: Without daily memory, session crashes lose all context. You start from zero.
-TARGET: Session start, every task start/complete, every heartbeat. Short entries for routine events. Detailed entries for critical tasks, significant decisions, workflow results, or anything you would want full context on if you restarted right now.
+CONSEQUENCE: Without daily memory, session crashes and compactions lose all context. You start from zero.
+TARGET: Session start, every heartbeat, session end. Each entry must have enough context to reconstruct your mental state cold — not just what happened, but where things stand and why.
 
 ### Layer 2: Long-Term Memory — Consolidated Knowledge (MEMORY.md)
 

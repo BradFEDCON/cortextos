@@ -43,21 +43,72 @@ TARGET: Every significant piece of work (>10 minutes) = at least 1 task created.
 
 ## Mandatory Memory Protocol
 
-You have TWO memory layers. Both are mandatory.
+You have THREE memory layers. All are mandatory.
 
 ### Layer 1: Daily Memory (memory/YYYY-MM-DD.md)
-Write to this file:
-- On every session start
-- Before starting any task (WORKING ON: entry)
-- After completing any task (COMPLETED: entry)
-- On every heartbeat cycle
-- On session end
+
+Write at these checkpoints — not continuously:
+- **Session start**: current state, what you are resuming and why
+- **Heartbeat cycle**: state snapshot — current focus, active threads, key decisions, context notes
+- **Session end**: full context dump so the next session can resume cold
+
+Each entry should answer: **"if my context was wiped right now, what would I need to know to resume intelligently?"**
+
+**Mid-work inline notes — write immediately, don't wait for heartbeat:**
+```bash
+echo "NOTE $(date -u +%H:%M UTC): <key decision / discovery / user preference / non-obvious thing>" >> "memory/$TODAY.md"
+```
+Use this when: you make a significant decision, learn something about the user, hit a non-obvious situation, or encounter anything you would want the next session to know. One line is enough.
+
+Session start format:
+```bash
+TODAY=$(date -u +%Y-%m-%d)
+mkdir -p memory
+cat >> "memory/$TODAY.md" << MEMEOF
+
+## Session Start - $(date -u +%H:%M:%S UTC)
+- Status: online
+- Crons active: <list from CronList>
+- Inbox: <N messages or "empty">
+- Current state: <where things stand — what is in progress, pending, or needs attention>
+- Resuming: <what to do next and why, with enough context to act without re-reading everything>
+
+MEMEOF
+```
+
+Heartbeat format:
+```
+## Heartbeat - HH:MM UTC
+- Current focus: <what I am working on and why>
+- Active threads: <anything in progress or being monitored — state of each>
+- Key decisions: <decisions made since last entry with brief rationale>
+- Context notes: <anything non-obvious — user preferences, environment state, blockers>
+- Next: <what I am doing next>
+```
+
+Session end format:
+```bash
+TODAY=$(date -u +%Y-%m-%d)
+cat >> "memory/$TODAY.md" << MEMEOF
+
+## Session End - $(date -u +%H:%M:%S UTC)
+- Status: [done/interrupted/context-full]
+- Current state: [where things stand — specific enough that the next session can resume cold]
+- Active threads: [anything in progress or mid-task with current state]
+- Key decisions: [significant decisions from this session worth carrying forward]
+- For next session: [what to do first and what context is needed]
+
+MEMEOF
+```
 
 ### Layer 2: Long-Term Memory (MEMORY.md)
-Update when you learn something that should persist across sessions.
+Update when you learn something that should persist across sessions — patterns, user preferences, decisions, system behaviours. Not a log — a living document.
 
-CONSEQUENCE: Without daily memory, session crashes lose all context. You start from zero.
-TARGET: >= 3 memory entries per session.
+### Layer 3: Knowledge Base (RAG/ChromaDB)
+Re-ingest MEMORY.md and today's daily memory on every heartbeat so they stay semantically searchable.
+
+CONSEQUENCE: Without daily memory, session crashes and compactions lose all context. You start from zero.
+TARGET: Session start, every heartbeat, session end. Each entry must have enough context to reconstruct your mental state cold.
 
 ---
 
