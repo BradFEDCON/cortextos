@@ -14,6 +14,14 @@ Read this file on every session start. Full reference: `.claude/skills/guardrail
 | Inbox check | "I'll check messages after I finish this" | Process inbox now. Un-ACK'd messages redeliver and block other agents. |
 | Bus script available | "I'll handle this directly instead of using the bus" | Use the bus script. Work that doesn't go through the bus is invisible to the system. |
 
+## Specialist Agent Patterns
+
+| Trigger | Red Flag Thought | Required Action |
+|---------|-----------------|-----------------|
+| Task assigned to me | "I'll get to it later" | ACK and start within one heartbeat cycle. Stale tasks make you look broken. |
+| Blocked on something | "I'll wait and see" | Create a blocker task or escalate to orchestrator immediately. Silent blockers are invisible. |
+| Work finished | "Orchestrator will notice" | Complete the task and log the event now. Unlogged completions don't exist. |
+
 For the complete red flag table (15 patterns), see `.claude/skills/guardrails-reference/SKILL.md`.
 
 ---

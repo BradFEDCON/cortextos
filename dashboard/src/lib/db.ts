@@ -6,7 +6,10 @@ import path from 'path';
 import fs from 'fs';
 
 const instanceId = process.env.CTX_INSTANCE_ID ?? 'default';
-const DB_PATH = path.join(process.cwd(), '.data', `cortextos-${instanceId}.db`);
+const ctxRoot = process.env.CTX_ROOT;
+const DB_PATH = ctxRoot
+  ? path.join(ctxRoot, 'dashboard', `cortextos-${instanceId}.db`)
+  : path.join(process.cwd(), '.data', `cortextos-${instanceId}.db`);
 
 function createDatabase(): Database.Database {
   // Ensure .data directory exists
