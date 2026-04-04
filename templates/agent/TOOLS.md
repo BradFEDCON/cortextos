@@ -451,6 +451,26 @@ cortextos goals generate-md --agent boris --org lifeos
 
 ---
 
+## Auto-Skill Creation
+
+Skills you create from your own task patterns. No new commands — entirely prompt-driven.
+
+**Skill directories:**
+
+| Directory | Purpose |
+|-----------|---------|
+| `.claude/skills/[name]/` | Active skills — loaded at session start |
+| `skills/drafts/[name]/` | Draft candidates — NOT loaded until approved |
+| `skills/archive/[name]/` | Rejected or expired drafts |
+
+**Trigger:** 8+ distinct tool calls in a coherent task, OR same task type seen 3+ times in daily memory.
+
+**Full workflow:** See `.claude/skills/auto-skill/SKILL.md`
+
+**Approval flow:** Draft → orchestrator digest → James approves via Telegram → originating agent activates.
+
+---
+
 ## Community Ecosystem
 
 ### browse-catalog
