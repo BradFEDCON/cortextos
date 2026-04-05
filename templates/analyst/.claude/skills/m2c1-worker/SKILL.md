@@ -25,7 +25,7 @@ You provide the brain dump, answer discovery questions, help with tool setup, mo
 
 ## Prerequisites
 
-- M2C1 skill files available (copy from grandamenium/paul-workspace if not local)
+- M2C1 skill files available (bundled in cortextos templates)
 - A clear project idea or brain dump
 - An isolated directory for the build
 - Worker session spawn mechanism available (`cortextos spawn-worker`)
@@ -53,11 +53,7 @@ mkdir -p .claude/skills/m2c1/artifact-templates
 
 # From GitHub (if not local)
 for file in SKILL.md orchestration-workflow.md; do
-  gh api "repos/grandamenium/paul-workspace/contents/skills/m2c1/$file" --jq '.content' | base64 -d > ".claude/skills/m2c1/$file"
-done
-
-for file in $(gh api repos/grandamenium/paul-workspace/contents/skills/m2c1/artifact-templates --jq '.[].name'); do
-  gh api "repos/grandamenium/paul-workspace/contents/skills/m2c1/artifact-templates/$file" --jq '.content' | base64 -d > ".claude/skills/m2c1/artifact-templates/$file"
+  gh api "repos/grandamenium/cortextos/contents/templates/agent/.claude/skills/m2c1/$file" --jq '.content' | base64 -d > ".claude/skills/m2c1/$file"
 done
 ```
 

@@ -149,8 +149,7 @@ Agent secrets: `orgs/{org}/agents/{agent}/.env`
 ### gogcli (Google Workspace)
 - Binary: `gog` (v0.12.0 at `/opt/homebrew/bin/gog`)
 - Gmail, Calendar, Drive, Contacts, Tasks, Sheets, Docs
-- Accounts: `grandamenium@gmail.com` (dev), `jameshgoldbach@gmail.com` (personal/donna2), `cointallybusiness@gmail.com` (cointally)
-- Always use `grandamenium@gmail.com` for boris2 tasks
-- `gog gmail search "query" --max 10 -a grandamenium@gmail.com`
-- `gog calendar ls -a grandamenium@gmail.com --max 5`
+- Accounts: configure your Google accounts in your agent's `.env` or org `secrets.env`
+- `gog gmail search "query" --max 10 -a you@gmail.com`
+- `gog calendar ls -a you@gmail.com --max 5`
 - Use `gog` instead of Gmail/Calendar MCP — more capable (send, archive, labels)

@@ -103,7 +103,7 @@ export class AgentManager {
 
       // ALLOWED_USER must be a numeric Telegram user ID, not a username
       if (allowedUserId && !/^\d+$/.test(allowedUserId)) {
-        log(`WARNING: ALLOWED_USER="${allowedUserId}" is not a numeric ID. Telegram user IDs are numbers (e.g. 7940429114). Messages will be blocked. Fix the .env file.`);
+        log(`WARNING: ALLOWED_USER="${allowedUserId}" is not a numeric ID. Telegram user IDs are numbers (e.g. 123456789). Messages will be blocked. Fix the .env file.`);
         allowedUserId = undefined; // Disable the gate rather than silently block all messages
       }
 
