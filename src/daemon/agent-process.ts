@@ -700,14 +700,14 @@ export class AgentProcess {
         const record = state.crons.find(r => r.name === cronDef.name);
         let lastFireMs: number;
         if (!record) {
-          // No fire record yet (cold start or daemon restart before first cron fire).
-          // Treat the loop start time as the implicit last fire. This means gap
-          // detection will nudge if the cron hasn't fired within 2x its interval
-          // AFTER the daemon restarted — preventing dead zones on cold starts.
           lastFireMs = loopStartedAt;
         } else {
           lastFireMs = Date.parse(record.last_fire);
           if (isNaN(lastFireMs)) continue;
+          // If the recorded fire time pre-dates this daemon start (e.g. stale timestamp
+          // from before a restart storm), clamp to loopStartedAt so we don't fire false
+          // gap nudges for crons that simply haven't had a chance to run since the restart.
+          lastFireMs = Math.max(lastFireMs, loopStartedAt);
         }
 
         const gapMs = now - lastFireMs;
