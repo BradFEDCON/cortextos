@@ -1,0 +1,35 @@
+{
+  "approval_id": "APR-2026-04-22-001-task-backlog",
+  "requested_at": "2026-04-22T00:00:00Z",
+  "requested_by": "hubspot-agent/heartbeat",
+  "status": "PENDING",
+  "priority": "MEDIUM",
+  "action": "BULK_TASK_REVIEW_AND_DISMISS",
+  "title": "Review and dismiss 1,627 overdue stale tasks",
+  "description": "1,627 NOT_STARTED tasks are overdue (due date before 2026-04-22). The oldest date back to September 2025. The majority are auto-generated HubSpot tasks with subjects like 'Add outcome for Call with [contact name]'. These appear to be a systemic artifact of HubSpot's call logging workflow — tasks auto-created when a call is logged but no outcome is entered. They are not intentional follow-up tasks. However, some may include genuine TODO items mixed in.",
+  "affected_records": 1627,
+  "affected_object_type": "TASK",
+  "filter_criteria": {
+    "hs_task_status": "NOT_STARTED",
+    "hs_timestamp_before": "2026-04-22"
+  },
+  "sample_records": [
+    {"id": "88676828854", "subject": "Call Kyle Samson 2025-09", "due": "2025-09-23"},
+    {"id": "89577920290", "subject": "Add outcome for Call with Randy Holmquist", "due": "2025-09-24"},
+    {"id": "89559691842", "subject": "Add outcome for Call with Vernon Grant", "due": "2025-09-24"},
+    {"id": "89589361316", "subject": "Add outcome for Call with Atavia Moorer", "due": "2025-09-24"},
+    {"id": "89702931713", "subject": "Add outcome for Call with Caller +18138237096", "due": "2025-09-25"},
+    {"id": "90335967653", "subject": "Update outcome for meeting with Patriot Haulers Llc", "due": "2025-10-01"},
+    {"id": "90335643548", "subject": "Update outcome for meeting with Nestled Llc", "due": "2025-10-01"}
+  ],
+  "recommendation": "DISMISS_CALL_OUTCOME_TASKS: Bulk-mark as COMPLETED all tasks matching pattern 'Add outcome for Call with' or 'Update outcome for meeting with' that are >60 days overdue. Keep any tasks with custom subjects (genuine TODOs) for manual review.",
+  "risk": "LOW — these are auto-generated bookkeeping tasks with no deal/revenue impact",
+  "requires_human_approval": true,
+  "approval_options": [
+    "APPROVE_DISMISS_ALL: Mark all 1,627 overdue tasks as completed (fastest cleanup)",
+    "APPROVE_DISMISS_CALL_OUTCOME_ONLY: Only dismiss 'Add outcome' / 'Update outcome' pattern tasks",
+    "REJECT: Leave tasks as-is, agent will not touch them",
+    "DEFER: Revisit next heartbeat with more analysis"
+  ],
+  "hubspot_task_url": "https://app.hubspot.com/tasks/48836268/view/all?utm_source=fedcon_agent&utm_medium=approval_request"
+}
