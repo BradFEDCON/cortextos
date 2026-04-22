@@ -1,32 +1,35 @@
 {
   "approval_id": "APR-2026-04-22-002-unowned-deals",
   "requested_at": "2026-04-22T00:00:00Z",
+  "corrected_at": "2026-04-22T20:15:00Z",
   "requested_by": "hubspot-agent/heartbeat",
   "status": "PENDING",
   "priority": "HIGH",
   "action": "HUMAN_REVIEW_REQUIRED",
-  "title": "567 open deals have no owner assigned",
-  "description": "567 open deals in pipeline 695988740 have no hubspot_owner_id. These are pipeline blind spots — no rep is accountable for them, they won't appear in rep activity reports, and they may be stalling due to lack of ownership. Some have recent modification dates (last 24-48 hours), suggesting they may still be actively worked but improperly attributed.",
-  "affected_records": 567,
+  "title": "140 open deals have no owner assigned (corrected from 567)",
+  "description": "140 open deals in pipeline 695988740 (open stages only: Discovery, MA Scheduled, Nurturing, Long Term Follow-Up) have no hubspot_owner_id. The original figure of 567 was incorrect — it included Closed Lost deals (stage 1018642303) because the first heartbeat used wrong stage filter strings. The corrected count of 140 represents truly open, unattributed pipeline. Of the 140, approximately 50 have deal amounts; the top 10 by value total ~$119,552 in unattributed pipeline. These deals have no rep accountability and may be going cold.",
+  "affected_records": 140,
   "affected_object_type": "DEAL",
-  "sample_records": [
-    {"id": "37235067317", "name": "HUMBOLDT PACIFIC LLC", "stage": "1018642303", "close_date": "2025-08-19", "last_modified": "2026-04-21"},
-    {"id": "43256108206", "name": "Christopher Stephens", "stage": "1018642303", "close_date": "2026-01-21", "last_modified": "2026-04-21"},
-    {"id": "49614238034", "name": "Ratliff Consolidated Logistics L.l.c.", "stage": "1018642303", "close_date": "2026-01-12", "last_modified": "2026-04-20"},
-    {"id": "57103138052", "name": "MTN-INC", "stage": "1018642299", "close_date": null, "last_modified": "2026-04-20"},
-    {"id": "57956765279", "name": "Ibtt Construction", "stage": "1018642299", "close_date": null, "last_modified": "2026-04-20"},
-    {"id": "40745693869", "name": "Cloud Resources Llc - 8a/MBE", "amount": 8784.5, "stage": "1018642302", "close_date": "2025-07-25", "last_modified": "2026-04-20"},
-    {"id": "43041521714", "name": "Keith Case", "amount": 2495, "stage": "1018642303", "close_date": "2026-01-21", "last_modified": "2026-04-19"},
-    {"id": "46599557133", "name": "Das Equity Holding Llc", "amount": 12990, "stage": "1018642301", "close_date": null, "last_modified": "2026-04-19"}
+  "correction_note": "Original count of 567 was wrong — stage filter bug caused closed deals to be included. Corrected count is 140 after applying proper numeric stage ID filter.",
+  "top_unowned_open_deals_by_value": [
+    {"id": "45664158025", "name": "Schultz Contracting Llc-Self Gen", "amount": 25980, "stage": "Nurturing", "last_modified": "2026-03-31"},
+    {"id": "39656948118", "name": "Supply Unlimited, Llc", "amount": 19985, "stage": "Long Term Follow-Up", "close_date": null, "last_modified": "2026-03-31"},
+    {"id": "46599557133", "name": "Das Equity Holding Llc", "amount": 12990, "stage": "Nurturing", "close_date": null, "last_modified": "2026-04-19"},
+    {"id": "40243322708", "name": "Trooper Drones Llc", "amount": 12590, "stage": "Long Term Follow-Up", "close_date": null, "last_modified": "2026-04-03"},
+    {"id": "43582721903", "name": "Esco Contractors Inc", "amount": 11042.5, "stage": "Nurturing", "last_modified": "2026-03-31"},
+    {"id": "44965367399", "name": "Obelisk Consulting Services LLC", "amount": 9995, "stage": "Nurturing", "last_modified": "2026-03-12"},
+    {"id": "45326982295", "name": "Veteran Tree Services And Land Consulting LLC", "amount": 9995, "stage": "Nurturing", "last_modified": "2026-03-31"},
+    {"id": "45144605086", "name": "Arrow Route Direct Llc-Self Gen", "amount": 9995, "stage": "Nurturing", "last_modified": "2026-03-11"},
+    {"id": "43118506826", "name": "Action Construction Inc", "amount": 9995, "stage": "Long Term Follow-Up", "last_modified": "2026-04-01"},
+    {"id": "42665517348", "name": "Trial Equity Llc", "amount": 9995, "stage": "Nurturing", "last_modified": "2026-03-31"}
   ],
-  "additional_notes": "Several unowned deals also have overdue close dates (still open months past their expected close). This double data quality issue (no owner + overdue close date) makes these deals especially hard to track or act on.",
-  "recommendation": "ASSIGN_REVIEW_QUEUE: Have a sales manager review the 567 unowned deals and assign to appropriate reps. Agent cannot autonomously assign ownership without knowing rep territories, capacity, and deal context.",
-  "risk": "HIGH (business risk) — unowned deals may be going cold with no follow-up",
+  "recommendation": "ASSIGN_REVIEW_QUEUE: Have a sales manager review the 140 unowned open deals and assign to appropriate reps. Agent cannot autonomously assign ownership without knowing rep territories, capacity, and deal context.",
+  "risk": "HIGH (business risk) — unowned open deals have no rep accountability and may be going cold",
   "requires_human_approval": true,
   "approval_options": [
-    "PROVIDE_ASSIGNMENT_RULES: Give agent a rule (e.g., round-robin by rep ID list, or assign all to manager for review) and agent will execute bulk assignment",
+    "PROVIDE_ASSIGNMENT_RULES: Give agent a rule (e.g., round-robin by rep ID list, or assign all to manager) and agent will execute bulk assignment",
     "MANUAL_REVIEW: Sales manager manually reviews and assigns in HubSpot UI",
-    "EXPORT_LIST: Agent generates a report of all 567 deals for offline review"
+    "EXPORT_LIST: Agent generates a full report of all 140 deals for offline review"
   ],
   "hubspot_deals_url": "https://app.hubspot.com/contacts/48836268/deals?utm_source=fedcon_agent&utm_medium=approval_request"
 }

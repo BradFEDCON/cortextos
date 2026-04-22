@@ -33,6 +33,40 @@ Note: Stage names not yet resolved from IDs — should query pipeline properties
 2. **Unowned deals**: Multiple open deals have no hubspot_owner_id. These are pipeline blind spots.
 3. **No close dates**: Several open deals missing closedate, impairing forecast accuracy.
 
+## Pipeline Stage ID Map (AUTHORITATIVE — resolved 2026-04-22)
+| Stage ID | Stage Name | Notes |
+|---|---|---|
+| `1018642297` | Discovery Stage | Open — earliest funnel stage |
+| `1018642299` | MA Scheduled | Open — meeting/assessment scheduled |
+| `1018642301` | Nurturing | Open — active nurture |
+| `1071366932` | Long Term Follow-Up | Open — holding/nurture |
+| `1018642302` | Closed Won | CLOSED |
+| `1018642303` | Closed Lost | CLOSED |
+
+**WARNING**: Always filter open deals using `IN [1018642297, 1018642299, 1018642301, 1071366932]`. Do NOT use `closedwon`/`closedlost` string values — this pipeline uses numeric stage IDs only, and those string filters silently fail to exclude closed deals.
+
+## Corrected Baseline Metrics (2026-04-22 second heartbeat)
+Previous baseline (first heartbeat) was wrong — stage filters used default HubSpot string IDs that don't apply to this pipeline's numeric stage IDs.
+
+| Metric | Wrong (first HB) | Correct |
+|---|---|---|
+| Total open deals | 4,734 | **1,422** |
+| Unowned open deals | 567 | **140** |
+| Zombie deals (open + past close date) | unknown | **79** |
+
+### Open Stage Distribution (as of 2026-04-22)
+- Discovery Stage: 274
+- MA Scheduled: 300
+- Nurturing: 564 (largest — ~40% of open pipeline)
+- Long Term Follow-Up: 285
+- **Total: 1,422**
+
+### Known Data Quality (corrected)
+- **79 zombie deals**: in open stage but with past close date; oldest from April 2025 (1+ year stale)
+- **140 unowned open deals**: 50 have amounts; top 10 represent ~$119,552 unattributed value
+- **1,627 overdue NOT_STARTED tasks**: still pending human decision (APR-2026-04-22-001)
+
 ## Decisions & Learnings
-- 2026-04-22: First heartbeat. Directory structure initialized. Baseline metrics established.
+- 2026-04-22: First heartbeat. Directory structure initialized. Baseline metrics established (later found to be incorrect due to stage filter bug).
 - 2026-04-22: Task backlog likely systemic (auto-generated call outcome tasks) — created approval request for human review before any bulk action.
+- 2026-04-22 (second heartbeat): Resolved all stage IDs. Corrected every baseline metric. Key insight: this pipeline uses numeric stage IDs; string-based closedwon/closedlost filters do not work. Updated APR-2026-04-22-002 with correct count of 140 unowned open deals.
