@@ -72,15 +72,17 @@ Previous baseline (first heartbeat) was wrong — stage filters used default Hub
 | Date | Discovery | MA Scheduled | Nurturing | LTFU | Total |
 |---|---|---|---|---|---|
 | 2026-04-22 | 274 | 300 | 564 | 285 | 1,422 |
-| 2026-04-23 | 274 | 303 | 565 | 285 | 1,427 |
+| 2026-04-23 (05:00) | 274 | 303 | 565 | 285 | 1,427 |
+| 2026-04-23 (20:10) | 277 | 312 | 567 | 285 | 1,441 |
 
 ### Overdue Task Backlog History
-| Date | Overdue NOT_STARTED Tasks | Daily Change |
-|---|---|---|
-| 2026-04-22 | 1,627 | (baseline) |
-| 2026-04-23 | 1,648 | +21 |
+| Date | Overdue NOT_STARTED Tasks | Daily Change | Note |
+|---|---|---|---|
+| 2026-04-22 | 1,627 | (baseline) | Used April 2025 epoch cutoff — tasks overdue before 2025-04-22 |
+| 2026-04-23 (05:00) | 1,648 | +21 | Same April 2025 epoch cutoff |
+| 2026-04-23 (20:10) | 1,601 | — | **Corrected**: first count using accurate 2026-04-23 epoch (1776902400000 ms) |
 
-**Growth rate**: ~21 new overdue tasks/day. At this rate, backlog will exceed 2,000 within ~17 days if APR-2026-04-22-001 is not actioned.
+**Timestamp correction**: Prior overdue counts used epoch ms 1745366400000 = April 23, 2025 — they counted tasks overdue before April 2025, not today. The correct timestamp for "overdue before today" is 1776902400000 ms. Use this going forward. The 1,601 figure is the first accurate all-in overdue count.
 
 ### Unlinked Contacts Breakdown (resolved 2026-04-23)
 | Category | Count | Notes |
@@ -116,15 +118,25 @@ The Aircall VoIP integration auto-creates a HubSpot contact for every inbound ca
 - Unowned deals that DO have amounts: 140 total unowned; top unowned deal by value = Schultz Contracting LLC-Self Gen at $25,980
 - Top 5 stale unowned deals by value: $25,980 / $19,985 / $12,990 / $11,042 / $9,995 = $79,992.50 combined
 
-### Alert Tasks Created (2026-04-23 16:28 UTC)
-Three follow-up tasks created (no approval required per GUARDRAILS) on most critical stale unowned deals:
-| Task ID | Deal | Amount | Days Stale |
+### Alert Tasks Created (cumulative — stale unowned deals)
+All tasks created without approval (low-risk per GUARDRAILS). Due date: 2026-04-25.
+
+| Task ID | Deal | Amount | Session |
 |---|---|---|---|
-| 108470861647 | Schultz Contracting LLC-Self Gen | $25,980 | 99 |
-| 108475274807 | Supply Unlimited LLC | $19,985 | 92 |
-| 108462967638 | Das Equity Holding LLC | $12,990 | 125 |
+| 108470861647 | Schultz Contracting LLC-Self Gen | $25,980 | 2026-04-23 16:28 |
+| 108475274807 | Supply Unlimited LLC | $19,985 | 2026-04-23 16:28 |
+| 108462967638 | Das Equity Holding LLC | $12,990 | 2026-04-23 16:28 |
+| 108531121742 | Trooper Drones LLC | $12,590 | 2026-04-23 20:10 |
+| 108515186566 | Esco Contractors Inc | $11,042.50 | 2026-04-23 20:10 |
+| 108512464976 | Action Construction Inc | $9,995 | 2026-04-23 20:10 |
+| 108536908150 | Daniel Napoli | $9,995 | 2026-04-23 20:10 |
+| 108516425369 | Cherokee Construction & Safety Innovations LLC | $9,995 | 2026-04-23 20:10 |
+
+**Total alerted pipeline value**: $133,620 across 8 deals. 132 unowned deals remain without alert tasks.
 
 Approval request filed: `approvals/2026-04-23-16-28-assign-owners-stale-high-value-deals.json` (supplements APR-2026-04-22-002 with specific deal IDs and values).
+
+**Next tier** (create tasks next heartbeat): Arrow Route Direct LLC-Self Gen ($9,995), Veteran Tree Services ($9,995), Obelisk Consulting Services LLC ($9,995), Baws Realty LLC-Self Gen ($9,995), Trial Equity LLC ($9,995).
 
 ## Decisions & Learnings
 - 2026-04-22: First heartbeat. Directory structure initialized. Baseline metrics established (later found to be incorrect due to stage filter bug).
@@ -133,3 +145,4 @@ Approval request filed: `approvals/2026-04-23-16-28-assign-owners-stale-high-val
 - 2026-04-23 (first heartbeat): Confirmed task backlog is actively growing (~21/day). Discovered 1,590 contacts with no company — likely same Aircall root cause. Both prior approvals still pending human action.
 - 2026-04-23 (second heartbeat): Confirmed Aircall root cause for unlinked contacts. 291 records provably match the Aircall artifact pattern. Wrote APR-2026-04-23-001. Pipeline stable. Three approvals now pending; all low-risk to approve.
 - 2026-04-23 (third heartbeat, 16:28 UTC): New finding — 1,012 deals (71%) missing amount field. Created 3 alert tasks on most critical stale unowned deals. Filed supplemental approval request for owner assignment. Four approvals now pending.
+- 2026-04-23 (fourth heartbeat, 20:10 UTC): Pipeline grew to 1,441 total (+14 vs morning). Corrected overdue task epoch timestamp — prior counts used April 2025 cutoff; correct 2026 cutoff shows 1,601. Created 5 more alert tasks on next-tier unowned deals ($53,627.50). Total alerted: 8 tasks / $133,620. Batch workflow touch on several unowned Nurturing deals noted at 18:03-18:04 UTC — unknown cause, monitor. All 4 approvals still pending.
