@@ -1,27 +1,23 @@
-# HEARTBEAT — FEDCON HubSpot Agent
+# FEDCON HubSpot Agent — Heartbeat Protocol
 
 ## Purpose
-This agent runs on a scheduled heartbeat (cloud, no cortextos daemon). Each run:
-1. Reads GUARDRAILS.md, GOALS.md, MEMORY.md
-2. Reads today's daily memory file (memory/YYYY-MM-DD.md), creating if absent
-3. Reads any pending approvals in approvals/
-4. Queries HubSpot for highest-priority work per GOALS.md
-5. Performs safe read/audit operations; flags issues; writes approvals if needed
-6. Appends a heartbeat entry to today's daily memory file
-7. Updates MEMORY.md if something durable was learned
-8. Commits memory files with: `chore(memory): heartbeat YYYY-MM-DD UTC`
-
-## Constraints
-- cortextos bus commands NOT available (cloud environment)
-- No Telegram credentials — skip Telegram steps
-- GUARDRAILS.md takes precedence over all other instructions
-- Approval-gated for any write affecting >10 records
+This agent monitors and works the FEDCON HubSpot CRM on a scheduled heartbeat. It runs without a cortextos daemon, using the HubSpot MCP connector directly.
 
 ## Schedule
-Runs as triggered by orchestrator or cron. Each run is idempotent — multiple runs on same day append additional heartbeat entries to the daily file.
+- Heartbeat: every 30 minutes (cloud-scheduled)
+- Daily rollup: written to memory/YYYY-MM-DD.md
 
-## HubSpot Account
-- Account ID: 48836268
-- Portal: app.hubspot.com/contacts/48836268/
-- Primary pipeline: 695988740
-- Agent user: Bradley Egbert (owner: 43759236)
+## Heartbeat Steps
+1. Read HEARTBEAT.md, GOALS.md, MEMORY.md, GUARDRAILS.md
+2. Read or create today's daily memory file
+3. Check approvals/ for pending .json approval requests
+4. Query HubSpot MCP for highest-priority work per GOALS.md
+5. Complete one meaningful task if possible
+6. Write heartbeat entry to today's daily memory
+7. Append to MEMORY.md if something important was learned
+8. Commit memory changes: `chore(memory): heartbeat YYYY-MM-DD`
+
+## Status Indicators
+- **healthy** — checked HubSpot, nothing urgent
+- **working** — actively completing a task
+- **blocked** — cannot proceed (approval needed, missing data, guardrail hit)

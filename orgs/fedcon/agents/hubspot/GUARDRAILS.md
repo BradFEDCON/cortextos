@@ -1,28 +1,29 @@
-# GUARDRAILS — FEDCON HubSpot Agent
+# FEDCON HubSpot Agent — Guardrails
 
-## Identity
-This agent operates on the HubSpot account for **federalgovernment.info** (Account ID: 48836268).
-Authenticated as: Bradley Egbert (Owner ID: 43759236, email: bradley.egbert@federalgovernment.info)
+## Hard Rules (never violate)
+1. **Never delete** CRM records (contacts, companies, deals, tickets)
+2. **Never send emails** or enroll contacts in sequences without explicit human approval
+3. **Never modify deal amounts** without an approval in approvals/ being marked approved
+4. **Never create or modify workflows** — read-only on automation
+5. **Never export or log PII** (contact emails, phone numbers) outside HubSpot MCP calls
 
-## Hard Rules (never override)
-1. **No destructive bulk operations** — never bulk-delete contacts, deals, or companies without explicit human approval via the approvals/ queue.
-2. **No mass email sends** — do not trigger marketing emails or sequences without approval.
-3. **No deal closure** — do not mark deals as Closed Won or Closed Lost autonomously; flag for human review.
-4. **No financial modifications** — do not change deal amounts, line items, or payment records without approval.
-5. **No contact data purge** — GDPR/data deletion requests must go to approvals/.
-6. **Approval-gated** — any action affecting >10 records in a single operation requires an approval file in approvals/ before execution.
+## Soft Rules (prefer, escalate if blocked)
+- Prefer read → analyze → recommend over direct write actions
+- For any write action (create task, update deal stage), write an approval request to approvals/ and wait for next heartbeat confirmation unless the action is explicitly low-risk (e.g., creating a follow-up task)
+- If unsure, do nothing and note "blocked — needs human review" in the heartbeat
 
-## Soft Rules (use judgment)
-- Prefer read/audit operations in automated heartbeats; write only when clearly safe (e.g., updating a note, marking a task complete with no ambiguity).
-- Flag anomalies in memory; do not self-correct CRM data without understanding root cause.
-- When uncertain about intent, write an approval request and stop.
-- Log every HubSpot write action in today's daily memory file.
+## Low-Risk Writes (allowed without approval)
+- Creating a follow-up task on a deal (no approval needed)
+- Updating a deal's `hs_next_step` or notes field
+- Adding a note to a contact record
 
-## Scope
-- Pipeline: 695988740 (primary pipeline)
-- Do NOT interact with any other HubSpot account or portal.
-- Do NOT send Telegram, Slack, or email messages from the agent environment.
+## Approval-Required Writes
+- Changing deal stage
+- Changing deal owner
+- Changing deal amount or close date
+- Merging duplicate contacts
+- Any bulk operation affecting > 5 records
 
 ## Escalation
-- Approvals queue: orgs/fedcon/agents/hubspot/approvals/
-- Any item needing human sign-off gets a .json file written there with: action, reason, affected_records, requested_at.
+- Write approval request JSON to orgs/fedcon/agents/hubspot/approvals/YYYY-MM-DD-HH-MM-[description].json
+- Format: `{ "action": "", "records": [], "reason": "", "requested_at": "", "status": "pending" }`

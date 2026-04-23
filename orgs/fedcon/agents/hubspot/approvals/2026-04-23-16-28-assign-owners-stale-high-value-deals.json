@@ -1,0 +1,56 @@
+{
+  "action": "assign_owner_to_unowned_deals",
+  "description": "140 open deals have no assigned owner. Top 5 by deal value are flagged below. Requesting approval to assign them to Bradley Egbert (ownerId: 43759236) or another appropriate owner.",
+  "records": [
+    {
+      "dealId": "45664158025",
+      "dealName": "Schultz Contracting LLC-Self Gen",
+      "amount": 25980,
+      "stage": "1018642301",
+      "lastActivity": "2026-01-14",
+      "daysSinceActivity": 99,
+      "url": "https://app.hubspot.com/contacts/48836268/record/0-3/45664158025"
+    },
+    {
+      "dealId": "39656948118",
+      "dealName": "Supply Unlimited, LLC",
+      "amount": 19985,
+      "stage": "1071366932",
+      "lastActivity": "2026-01-21",
+      "daysSinceActivity": 92,
+      "url": "https://app.hubspot.com/contacts/48836268/record/0-3/39656948118"
+    },
+    {
+      "dealId": "46599557133",
+      "dealName": "Das Equity Holding LLC",
+      "amount": 12990,
+      "stage": "1018642301",
+      "lastActivity": "2025-12-19",
+      "daysSinceActivity": 125,
+      "url": "https://app.hubspot.com/contacts/48836268/record/0-3/46599557133"
+    },
+    {
+      "dealId": "43582721903",
+      "dealName": "Esco Contractors Inc",
+      "amount": 11042.5,
+      "stage": "1018642301",
+      "lastActivity": "2026-01-16",
+      "daysSinceActivity": 97,
+      "url": "https://app.hubspot.com/contacts/48836268/record/0-3/43582721903"
+    },
+    {
+      "dealId": "44965367399",
+      "dealName": "Obelisk Consulting Services LLC",
+      "amount": 9995,
+      "stage": "1018642301",
+      "lastActivity": "2026-01-06",
+      "daysSinceActivity": 107,
+      "url": "https://app.hubspot.com/contacts/48836268/record/0-3/44965367399"
+    }
+  ],
+  "totalUnownedDeals": 140,
+  "reason": "Unowned deals have no responsible party for follow-up. Top 5 represent $79,992.50 in at-risk pipeline value, all dormant 90-125+ days.",
+  "proposed_owner": "43759236 (Bradley Egbert) — or reassign as appropriate",
+  "requested_at": "2026-04-23T16:28:00Z",
+  "status": "pending"
+}

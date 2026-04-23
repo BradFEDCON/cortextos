@@ -108,9 +108,28 @@ The Aircall VoIP integration auto-creates a HubSpot contact for every inbound ca
 - **Fix at source**: Disable "Create contact for unknown callers" in HubSpot > Settings > Integrations > Aircall — this stops new artifacts without requiring ongoing cleanup
 - **Approval written**: APR-2026-04-23-001 covers deletion of 291 confirmed artifacts
 
+## New Data Quality Finding (2026-04-23 third heartbeat)
+
+### Deals Missing Amount Field
+- **1,012 of 1,433 open deals (71%) have no `amount` set**
+- This makes pipeline value reporting and forecasting nearly impossible
+- Unowned deals that DO have amounts: 140 total unowned; top unowned deal by value = Schultz Contracting LLC-Self Gen at $25,980
+- Top 5 stale unowned deals by value: $25,980 / $19,985 / $12,990 / $11,042 / $9,995 = $79,992.50 combined
+
+### Alert Tasks Created (2026-04-23 16:28 UTC)
+Three follow-up tasks created (no approval required per GUARDRAILS) on most critical stale unowned deals:
+| Task ID | Deal | Amount | Days Stale |
+|---|---|---|---|
+| 108470861647 | Schultz Contracting LLC-Self Gen | $25,980 | 99 |
+| 108475274807 | Supply Unlimited LLC | $19,985 | 92 |
+| 108462967638 | Das Equity Holding LLC | $12,990 | 125 |
+
+Approval request filed: `approvals/2026-04-23-16-28-assign-owners-stale-high-value-deals.json` (supplements APR-2026-04-22-002 with specific deal IDs and values).
+
 ## Decisions & Learnings
 - 2026-04-22: First heartbeat. Directory structure initialized. Baseline metrics established (later found to be incorrect due to stage filter bug).
 - 2026-04-22: Task backlog likely systemic (auto-generated call outcome tasks) — created approval request for human review before any bulk action.
 - 2026-04-22 (second heartbeat): Resolved all stage IDs. Corrected every baseline metric. Key insight: this pipeline uses numeric stage IDs; string-based closedwon/closedlost filters do not work. Updated APR-2026-04-22-002 with correct count of 140 unowned open deals.
 - 2026-04-23 (first heartbeat): Confirmed task backlog is actively growing (~21/day). Discovered 1,590 contacts with no company — likely same Aircall root cause. Both prior approvals still pending human action.
 - 2026-04-23 (second heartbeat): Confirmed Aircall root cause for unlinked contacts. 291 records provably match the Aircall artifact pattern. Wrote APR-2026-04-23-001. Pipeline stable. Three approvals now pending; all low-risk to approve.
+- 2026-04-23 (third heartbeat, 16:28 UTC): New finding — 1,012 deals (71%) missing amount field. Created 3 alert tasks on most critical stale unowned deals. Filed supplemental approval request for owner assignment. Four approvals now pending.

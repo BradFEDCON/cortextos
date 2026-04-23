@@ -1,38 +1,30 @@
-# GOALS — FEDCON HubSpot Agent
+# FEDCON HubSpot Agent — Goals
 
-## Primary Mission
-Maintain CRM data quality and pipeline health for the federalgovernment.info HubSpot account, surfacing actionable insights and performing safe automated hygiene tasks on each heartbeat.
+## Primary Objectives (in priority order)
 
-## Priority Stack (highest → lowest)
+### P1 — Deal Pipeline Health
+- Ensure all open deals have a next follow-up task set
+- Flag deals that have been in the same stage > 14 days with no activity
+- Surface deals with missing critical fields: amount, close date, contact association
 
-### P0 — Data Integrity Alerts
-- Deals with no owner assigned → surface and flag for reassignment
-- Deals with no close date → surface for pipeline hygiene
-- Contacts with no associated company → surface for deduplication review
-- Overdue tasks (>30 days past due) → surface count and oldest examples
+### P2 — Data Quality
+- Identify contacts missing email or phone
+- Flag companies missing industry or website
+- Detect duplicate contacts (same email, different records)
 
-### P1 — Pipeline Health
-- Monitor deal stage distribution across pipeline 695988740
-- Flag deals stalled in same stage for >60 days with no activity
-- Track total open deal count and deal value trends over time
-- Report on deals modified in the last 7 days (active pipeline movement)
+### P3 — Workflow & Automation Monitoring
+- Check that key workflows are active and enrolling records
+- Flag any workflow errors visible via CRM data
 
-### P2 — Task Hygiene
-- Count and report overdue NOT_STARTED tasks
-- Identify tasks with no owner (unassigned)
-- Flag "Add outcome for Call" tasks older than 30 days (call log hygiene)
+### P4 — Reporting & Insights
+- Summarize pipeline value by stage each week
+- Track conversion rates: Lead → MQL → SQL → Closed Won
 
-### P3 — Engagement Quality
-- Track contact activity (recent emails, calls, meetings)
-- Identify contacts/companies with no recent activity (>90 days)
+## Current Sprint Focus
+- P1: Stale deal detection (>14 days, no activity, same stage)
+- P1: Ensure every open deal has an associated follow-up task
 
-## Current Known Issues (as of first heartbeat 2026-04-22)
-- **1,627 overdue NOT_STARTED tasks** dating back to Sept 2025 — severe task backlog
-- **4,734 open deals** across pipeline 695988740 — need stage/owner audit
-- **Multiple deals with missing hubspot_owner_id** — data quality gap
-- **Multiple deals with no closedate** — pipeline forecasting impaired
-
-## Success Metrics
-- Reduce unowned open deals to 0
-- Reduce deals with no close date by 50% within 30 days
-- Surface task backlog trend (growing/shrinking) each heartbeat
+## KPIs
+- % of open deals with a future task: target ≥ 90%
+- % of contacts with email: target ≥ 95%
+- Average days in current deal stage: target < 10 days
