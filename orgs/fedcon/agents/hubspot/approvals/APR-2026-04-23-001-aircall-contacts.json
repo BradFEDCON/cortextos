@@ -1,0 +1,37 @@
+{
+  "approval_id": "APR-2026-04-23-001-aircall-contacts",
+  "requested_at": "2026-04-23T12:00:00Z",
+  "requested_by": "hubspot-agent/heartbeat",
+  "status": "PENDING",
+  "priority": "MEDIUM",
+  "action": "BULK_CONTACT_DELETE_OR_MERGE",
+  "title": "Delete or merge 291 confirmed Aircall artifact contacts with no company association",
+  "description": "291 contacts have lastname = 'Aircall new contact' and no associated company (associatedcompanyid = null). These are unambiguously auto-created by the Aircall VoIP integration when an inbound call arrives from an unknown number. Each record has: (1) a phone number as firstname, (2) the literal string 'Aircall new contact' as lastname, (3) no company association, (4) no email, (5) lifecycle stage of 'lead' or the numeric Aircall-assigned stage. They carry no sales value and inflate the contact database. This is a conservative, provable count — the actual Aircall artifact total within the 1,590 unlinked contacts may be higher if older records had their lastname modified by enrichment tools. The 291 figure is the safely actionable minimum: every record in this set is provably an Aircall artifact with no business data.",
+  "affected_records": 291,
+  "affected_object_type": "CONTACT",
+  "filter_criteria": {
+    "lastname": "Aircall new contact",
+    "associatedcompanyid": "NOT_HAS_PROPERTY"
+  },
+  "sample_records": [
+    {"id": "217162086207", "firstname": "+18432507756", "lastname": "Aircall new contact", "created": "2026-04-22T22:17Z"},
+    {"id": "217160830533", "firstname": "+16462601230", "lastname": "Aircall new contact", "created": "2026-04-22T21:54Z"},
+    {"id": "217160005284", "firstname": "+18253656446", "lastname": "Aircall new contact", "created": "2026-04-22T18:47Z"},
+    {"id": "217180326407", "firstname": "+14805163394", "lastname": "Aircall new contact", "created": "2026-04-22T18:29Z"},
+    {"id": "217136095096", "firstname": "+17273900547", "lastname": "Aircall new contact", "created": "2026-04-22T14:04Z"}
+  ],
+  "root_cause": "Aircall VoIP integration auto-creates a HubSpot contact on every inbound call from an unrecognized number. The integration cannot match the caller to an existing contact, so it creates a new record using the phone number as the name and 'Aircall new contact' as a static lastname. This is the same integration responsible for the 'Add outcome for Call' task backlog (APR-2026-04-22-001).",
+  "recommendation": "DELETE_ALL: These 291 records have no sales value. Recommend bulk delete. Alternatively, DISABLE the Aircall auto-contact-creation setting in Aircall/HubSpot integration settings to stop the inflow before cleaning up.",
+  "risk": "LOW — records have no company, no deals, no email, no meaningful engagement data. Deleting them does not affect pipeline, forecasting, or compliance.",
+  "stop_the_bleeding_note": "Even if deletion is approved, new Aircall artifacts will continue to be created at ~5-10/day until the Aircall integration setting 'Create contact for unknown callers' is disabled in HubSpot > Settings > Integrations > Aircall.",
+  "requires_human_approval": true,
+  "approval_options": [
+    "APPROVE_DELETE_ALL: Delete all 291 confirmed Aircall artifact contacts (lastname = 'Aircall new contact', no company)",
+    "APPROVE_DISABLE_INTEGRATION_ONLY: Disable Aircall auto-contact-creation setting; leave existing records for now",
+    "APPROVE_BOTH: Delete existing 291 AND disable auto-creation setting",
+    "REJECT: Leave contacts as-is; agent will not touch them",
+    "SCOPE_REVIEW: Agent should first produce a full export of all 291 before any deletion"
+  ],
+  "related_approvals": ["APR-2026-04-22-001-task-backlog"],
+  "hubspot_contacts_url": "https://app.hubspot.com/contacts/48836268/contacts/list/view/all/?utm_source=fedcon_agent&utm_medium=approval_request"
+}

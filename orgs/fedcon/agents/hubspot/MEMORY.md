@@ -82,6 +82,13 @@ Previous baseline (first heartbeat) was wrong — stage filters used default Hub
 
 **Growth rate**: ~21 new overdue tasks/day. At this rate, backlog will exceed 2,000 within ~17 days if APR-2026-04-22-001 is not actioned.
 
+### Unlinked Contacts Breakdown (resolved 2026-04-23)
+| Category | Count | Notes |
+|---|---|---|
+| Total unlinked contacts | 1,590 | `associatedcompanyid` = null |
+| Confirmed Aircall artifacts | 291 | lastname = "Aircall new contact" exactly |
+| Other unlinked contacts | ~1,299 | Mix of legitimate leads + possible Aircall variants |
+
 ## New P0 Finding (2026-04-23)
 
 ### Unlinked Contacts (Aircall Artifact)
@@ -92,8 +99,18 @@ Previous baseline (first heartbeat) was wrong — stage filters used default Hub
 - **Action needed**: Human review. If confirmed Aircall artifacts, a bulk-cleanup approval will be needed (>10 records = GUARDRAILS approval gate).
 - **Status**: Flagged. Not actioned. No approval request written yet — need sample analysis to confirm root cause first.
 
+## Aircall Integration Root Cause (confirmed 2026-04-23)
+The Aircall VoIP integration auto-creates a HubSpot contact for every inbound call from an unrecognized number:
+- **Pattern**: firstname = phone number, lastname = "Aircall new contact", no company, no email
+- **Confirmed count**: 291 contacts matching this exact pattern (no company association)
+- **Inflow rate**: ~5-10 new Aircall contacts/day based on recent sample dates
+- **Same root cause**: Both the "Add outcome for Call" task backlog (APR-2026-04-22-001) and the unlinked contacts issue (APR-2026-04-23-001) originate from Aircall integration
+- **Fix at source**: Disable "Create contact for unknown callers" in HubSpot > Settings > Integrations > Aircall — this stops new artifacts without requiring ongoing cleanup
+- **Approval written**: APR-2026-04-23-001 covers deletion of 291 confirmed artifacts
+
 ## Decisions & Learnings
 - 2026-04-22: First heartbeat. Directory structure initialized. Baseline metrics established (later found to be incorrect due to stage filter bug).
 - 2026-04-22: Task backlog likely systemic (auto-generated call outcome tasks) — created approval request for human review before any bulk action.
 - 2026-04-22 (second heartbeat): Resolved all stage IDs. Corrected every baseline metric. Key insight: this pipeline uses numeric stage IDs; string-based closedwon/closedlost filters do not work. Updated APR-2026-04-22-002 with correct count of 140 unowned open deals.
-- 2026-04-23: Confirmed task backlog is actively growing (~21/day). Discovered 1,590 contacts with no company — likely same Aircall root cause. Both prior approvals still pending human action.
+- 2026-04-23 (first heartbeat): Confirmed task backlog is actively growing (~21/day). Discovered 1,590 contacts with no company — likely same Aircall root cause. Both prior approvals still pending human action.
+- 2026-04-23 (second heartbeat): Confirmed Aircall root cause for unlinked contacts. 291 records provably match the Aircall artifact pattern. Wrote APR-2026-04-23-001. Pipeline stable. Three approvals now pending; all low-risk to approve.
