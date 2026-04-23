@@ -66,7 +66,34 @@ Previous baseline (first heartbeat) was wrong — stage filters used default Hub
 - **140 unowned open deals**: 50 have amounts; top 10 represent ~$119,552 unattributed value
 - **1,627 overdue NOT_STARTED tasks**: still pending human decision (APR-2026-04-22-001)
 
+## Trend Data (updated each heartbeat)
+
+### Open Deal Count History
+| Date | Discovery | MA Scheduled | Nurturing | LTFU | Total |
+|---|---|---|---|---|---|
+| 2026-04-22 | 274 | 300 | 564 | 285 | 1,422 |
+| 2026-04-23 | 274 | 303 | 565 | 285 | 1,427 |
+
+### Overdue Task Backlog History
+| Date | Overdue NOT_STARTED Tasks | Daily Change |
+|---|---|---|
+| 2026-04-22 | 1,627 | (baseline) |
+| 2026-04-23 | 1,648 | +21 |
+
+**Growth rate**: ~21 new overdue tasks/day. At this rate, backlog will exceed 2,000 within ~17 days if APR-2026-04-22-001 is not actioned.
+
+## New P0 Finding (2026-04-23)
+
+### Unlinked Contacts (Aircall Artifact)
+- **1,590 contacts** have no associated company (`associatedcompanyid` = null)
+- Sample entry: "+18432507756 Aircall new contact" — phone number as firstname, "Aircall new contact" as lastname
+- **Root cause hypothesis**: Aircall VoIP integration auto-creates a contact record for every inbound call from an unknown number, with no company association. This is the same integration driving the "Add outcome for Call" task backlog.
+- **Impact**: Inflated contact database, no rep accountability, deduplication noise
+- **Action needed**: Human review. If confirmed Aircall artifacts, a bulk-cleanup approval will be needed (>10 records = GUARDRAILS approval gate).
+- **Status**: Flagged. Not actioned. No approval request written yet — need sample analysis to confirm root cause first.
+
 ## Decisions & Learnings
 - 2026-04-22: First heartbeat. Directory structure initialized. Baseline metrics established (later found to be incorrect due to stage filter bug).
 - 2026-04-22: Task backlog likely systemic (auto-generated call outcome tasks) — created approval request for human review before any bulk action.
 - 2026-04-22 (second heartbeat): Resolved all stage IDs. Corrected every baseline metric. Key insight: this pipeline uses numeric stage IDs; string-based closedwon/closedlost filters do not work. Updated APR-2026-04-22-002 with correct count of 140 unowned open deals.
+- 2026-04-23: Confirmed task backlog is actively growing (~21/day). Discovered 1,590 contacts with no company — likely same Aircall root cause. Both prior approvals still pending human action.
