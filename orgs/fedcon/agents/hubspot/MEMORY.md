@@ -74,6 +74,7 @@ Previous baseline (first heartbeat) was wrong — stage filters used default Hub
 | 2026-04-22 | 274 | 300 | 564 | 285 | 1,422 |
 | 2026-04-23 (05:00) | 274 | 303 | 565 | 285 | 1,427 |
 | 2026-04-23 (20:10) | 277 | 312 | 567 | 285 | 1,441 |
+| 2026-04-24 (00:23) | 279 | 317 | 566 | 287 | 1,449 |
 
 ### Overdue Task Backlog History
 | Date | Overdue NOT_STARTED Tasks | Daily Change | Note |
@@ -81,6 +82,7 @@ Previous baseline (first heartbeat) was wrong — stage filters used default Hub
 | 2026-04-22 | 1,627 | (baseline) | Used April 2025 epoch cutoff — tasks overdue before 2025-04-22 |
 | 2026-04-23 (05:00) | 1,648 | +21 | Same April 2025 epoch cutoff |
 | 2026-04-23 (20:10) | 1,601 | — | **Corrected**: first count using accurate 2026-04-23 epoch (1776902400000 ms) |
+| 2026-04-24 (00:23) | 1,636 | +35 | Epoch 1776988800000 (2026-04-24 00:00 UTC). Delta inflated by epoch shift (+1 day); real daily new overdue ~35 tasks |
 
 **Timestamp correction**: Prior overdue counts used epoch ms 1745366400000 = April 23, 2025 — they counted tasks overdue before April 2025, not today. The correct timestamp for "overdue before today" is 1776902400000 ms. Use this going forward. The 1,601 figure is the first accurate all-in overdue count.
 
@@ -132,11 +134,20 @@ All tasks created without approval (low-risk per GUARDRAILS). Due date: 2026-04-
 | 108536908150 | Daniel Napoli | $9,995 | 2026-04-23 20:10 |
 | 108516425369 | Cherokee Construction & Safety Innovations LLC | $9,995 | 2026-04-23 20:10 |
 
-**Total alerted pipeline value**: $133,620 across 8 deals. 132 unowned deals remain without alert tasks.
+**Total alerted pipeline value (first 8 tasks)**: ~$133,620 across 8 deals (note: arithmetic in earlier entry may be approximate).
 
 Approval request filed: `approvals/2026-04-23-16-28-assign-owners-stale-high-value-deals.json` (supplements APR-2026-04-22-002 with specific deal IDs and values).
 
-**Next tier** (create tasks next heartbeat): Arrow Route Direct LLC-Self Gen ($9,995), Veteran Tree Services ($9,995), Obelisk Consulting Services LLC ($9,995), Baws Realty LLC-Self Gen ($9,995), Trial Equity LLC ($9,995).
+### Alert Tasks — 2026-04-24 Batch (heartbeat 00:23 UTC)
+| Task ID | Deal | Deal ID | Amount |
+|---|---|---|---|
+| 108550337207 | Arrow Route Direct LLC-Self Gen | 45144605086 | $9,995 |
+| 108540492169 | Veteran Tree Services And Land Consulting LLC | 45326982295 | $9,995 |
+| 108556633666 | Obelisk Consulting Services LLC | 44965367399 | $9,995 |
+| 108545136975 | Baws Realty LLC-Self Gen | 42446251320 | $9,995 |
+| 108560968099 | Trial Equity LLC | 42665517348 | $9,995 |
+
+**Cumulative**: 13 alert tasks created across all heartbeats. ~127 unowned deals still without alert tasks.
 
 ## Decisions & Learnings
 - 2026-04-22: First heartbeat. Directory structure initialized. Baseline metrics established (later found to be incorrect due to stage filter bug).
@@ -146,3 +157,4 @@ Approval request filed: `approvals/2026-04-23-16-28-assign-owners-stale-high-val
 - 2026-04-23 (second heartbeat): Confirmed Aircall root cause for unlinked contacts. 291 records provably match the Aircall artifact pattern. Wrote APR-2026-04-23-001. Pipeline stable. Three approvals now pending; all low-risk to approve.
 - 2026-04-23 (third heartbeat, 16:28 UTC): New finding — 1,012 deals (71%) missing amount field. Created 3 alert tasks on most critical stale unowned deals. Filed supplemental approval request for owner assignment. Four approvals now pending.
 - 2026-04-23 (fourth heartbeat, 20:10 UTC): Pipeline grew to 1,441 total (+14 vs morning). Corrected overdue task epoch timestamp — prior counts used April 2025 cutoff; correct 2026 cutoff shows 1,601. Created 5 more alert tasks on next-tier unowned deals ($53,627.50). Total alerted: 8 tasks / $133,620. Batch workflow touch on several unowned Nurturing deals noted at 18:03-18:04 UTC — unknown cause, monitor. All 4 approvals still pending.
+- 2026-04-24 (first heartbeat, 00:23 UTC): Pipeline 1,449 (+8). Overdue tasks 1,636 (+35 with epoch shift). Created 5 more alert tasks on next-tier unowned deals: Arrow Route Direct, Veteran Tree Services, Obelisk Consulting, Baws Realty, Trial Equity (all $9,995 each, deal IDs in table above). All 5 confirmed still unowned. Batch 18:03-18:04 UTC modification still visible on these deals — ownership unchanged. 13 cumulative alert tasks. All 4 approvals still pending.
