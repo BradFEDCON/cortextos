@@ -75,6 +75,7 @@ Previous baseline (first heartbeat) was wrong — stage filters used default Hub
 | 2026-04-23 (05:00) | 274 | 303 | 565 | 285 | 1,427 |
 | 2026-04-23 (20:10) | 277 | 312 | 567 | 285 | 1,441 |
 | 2026-04-24 (00:23) | 279 | 317 | 566 | 287 | 1,449 |
+| 2026-04-24 (04:08) | 280 | 317 | 566 | 287 | 1,450 |
 
 ### Overdue Task Backlog History
 | Date | Overdue NOT_STARTED Tasks | Daily Change | Note |
@@ -149,6 +150,22 @@ Approval request filed: `approvals/2026-04-23-16-28-assign-owners-stale-high-val
 
 **Cumulative**: 13 alert tasks created across all heartbeats. ~127 unowned deals still without alert tasks.
 
+### Alert Tasks — 2026-04-24 Batch (heartbeat 04:08 UTC)
+| Task ID | Deal | Deal ID | Amount | Stage |
+|---|---|---|---|---|
+| 108551292554 | Domain Construction Inc-Certs | 45491310662 | $9,685 | Nurturing |
+| 108558360113 | Metal Gear LLC | 44475664514 | $8,995 | Nurturing |
+| 108542527398 | Kassoum Oubda | 46555385626 | $7,795 | Nurturing |
+| 108547110933 | The Grayonics Pro Drone Pilot Photography & Special Event Company LLC | 48359058581 | $7,490 | LTFU |
+| 108553147787 | We Got Your Back Security LLC | 39276614763 | $5,995 | LTFU |
+| 108541910127 | WFV Trucking LLC | 45188994654 | $5,495 | LTFU |
+| 108534573627 | Trust Pointe Financial Services Inc-Self Gen | 45889615432 | $5,495 | LTFU |
+| 108553454848 | Lenape Logistics LLC | 51948611246 | $5,495 | Nurturing |
+| 108562849620 | Sterling Rise Federal Corporation | 45348993050 | $5,495 | Nurturing |
+| 108533796897 | Gavasha Inc | 41506214230 | $5,495 | Nurturing |
+
+**Cumulative**: 23 alert tasks created across all heartbeats. ~117 unowned deals still without alert tasks.
+
 ## Decisions & Learnings
 - 2026-04-22: First heartbeat. Directory structure initialized. Baseline metrics established (later found to be incorrect due to stage filter bug).
 - 2026-04-22: Task backlog likely systemic (auto-generated call outcome tasks) — created approval request for human review before any bulk action.
@@ -158,3 +175,4 @@ Approval request filed: `approvals/2026-04-23-16-28-assign-owners-stale-high-val
 - 2026-04-23 (third heartbeat, 16:28 UTC): New finding — 1,012 deals (71%) missing amount field. Created 3 alert tasks on most critical stale unowned deals. Filed supplemental approval request for owner assignment. Four approvals now pending.
 - 2026-04-23 (fourth heartbeat, 20:10 UTC): Pipeline grew to 1,441 total (+14 vs morning). Corrected overdue task epoch timestamp — prior counts used April 2025 cutoff; correct 2026 cutoff shows 1,601. Created 5 more alert tasks on next-tier unowned deals ($53,627.50). Total alerted: 8 tasks / $133,620. Batch workflow touch on several unowned Nurturing deals noted at 18:03-18:04 UTC — unknown cause, monitor. All 4 approvals still pending.
 - 2026-04-24 (first heartbeat, 00:23 UTC): Pipeline 1,449 (+8). Overdue tasks 1,636 (+35 with epoch shift). Created 5 more alert tasks on next-tier unowned deals: Arrow Route Direct, Veteran Tree Services, Obelisk Consulting, Baws Realty, Trial Equity (all $9,995 each, deal IDs in table above). All 5 confirmed still unowned. Batch 18:03-18:04 UTC modification still visible on these deals — ownership unchanged. 13 cumulative alert tasks. All 4 approvals still pending.
+- 2026-04-24 (second heartbeat, 04:08 UTC): Pipeline 1,450 (+1). Overdue tasks 1,636 (stable). Created 10 more alert tasks on next-tier unowned deals ($5,495–$9,685 each). Cumulative: 23 alert tasks / ~$201,055 total value alerted. 117 unowned deals remain without tasks. Batch 18:02–18:04 UTC touch pattern confirmed on 6 of 10 deals in this batch — all Nurturing stage; LTFU deals not affected. Pattern appears Nurturing-specific. All 4 approvals still pending; oldest (APR-2026-04-22-001) now 2+ days old.
