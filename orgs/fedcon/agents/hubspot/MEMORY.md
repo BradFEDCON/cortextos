@@ -76,6 +76,7 @@ Previous baseline (first heartbeat) was wrong — stage filters used default Hub
 | 2026-04-23 (20:10) | 277 | 312 | 567 | 285 | 1,441 |
 | 2026-04-24 (00:23) | 279 | 317 | 566 | 287 | 1,449 |
 | 2026-04-24 (04:08) | 280 | 317 | 566 | 287 | 1,450 |
+| 2026-04-24 (16:29) | 279 | 319 | 566 | 287 | 1,451 |
 
 ### Overdue Task Backlog History
 | Date | Overdue NOT_STARTED Tasks | Daily Change | Note |
@@ -84,6 +85,7 @@ Previous baseline (first heartbeat) was wrong — stage filters used default Hub
 | 2026-04-23 (05:00) | 1,648 | +21 | Same April 2025 epoch cutoff |
 | 2026-04-23 (20:10) | 1,601 | — | **Corrected**: first count using accurate 2026-04-23 epoch (1776902400000 ms) |
 | 2026-04-24 (00:23) | 1,636 | +35 | Epoch 1776988800000 (2026-04-24 00:00 UTC). Delta inflated by epoch shift (+1 day); real daily new overdue ~35 tasks |
+| 2026-04-24 (16:29) | 1,625 | −11 | Epoch 1777032000000 (~noon UTC). Decrease suggests reps completing tasks today |
 
 **Timestamp correction**: Prior overdue counts used epoch ms 1745366400000 = April 23, 2025 — they counted tasks overdue before April 2025, not today. The correct timestamp for "overdue before today" is 1776902400000 ms. Use this going forward. The 1,601 figure is the first accurate all-in overdue count.
 
@@ -112,6 +114,28 @@ The Aircall VoIP integration auto-creates a HubSpot contact for every inbound ca
 - **Same root cause**: Both the "Add outcome for Call" task backlog (APR-2026-04-22-001) and the unlinked contacts issue (APR-2026-04-23-001) originate from Aircall integration
 - **Fix at source**: Disable "Create contact for unknown callers" in HubSpot > Settings > Integrations > Aircall — this stops new artifacts without requiring ongoing cleanup
 - **Approval written**: APR-2026-04-23-001 covers deletion of 291 confirmed artifacts
+
+## Mystery Batch-Modification Pattern on Unowned Deals (ongoing investigation)
+
+**First observed**: 2026-04-23 (20:10 UTC heartbeat)
+**Status**: Unresolved — three events confirmed, source unknown
+
+### Known Events
+| Timestamp (UTC) | Deals Affected | Stages | Notes |
+|---|---|---|---|
+| 2026-04-23T18:02–18:04 | 6+ confirmed (likely more) | Nurturing only | First observed in 20:10 HB |
+| 2026-04-24T12:11–12:12 | 10 confirmed | Nurturing AND LTFU | First confirmed LTFU impact |
+
+**Pattern characteristics**:
+- Affects unowned open deals (all confirmed deals had `hubspot_owner_id` = null)
+- Modification does NOT assign ownership (deals remain unowned after touch)
+- Touches multiple deals in a ~2-minute burst (bulk/batch behavior)
+- Recurs roughly daily (~18 hours between known events)
+- Deals modified retain their original stage and amount
+
+**Leading hypothesis**: A HubSpot workflow with a filter for "deal has no owner" is triggering on a daily schedule and attempting some action (e.g., owner assignment, sequence enrollment, notification) that fails silently — the workflow run updates `hs_lastmodifieddate` without completing the intended write.
+
+**Investigation recommendation**: Review HubSpot workflow history for deal 45977009276 (Relevant Finds LLC, LTFU) — it was touched in the 12:11 UTC event and is a useful LTFU test case. Check "Workflow history" tab in deal record for any enrollment events around 12:11 UTC on 2026-04-24.
 
 ## New Data Quality Finding (2026-04-23 third heartbeat)
 
@@ -166,6 +190,22 @@ Approval request filed: `approvals/2026-04-23-16-28-assign-owners-stale-high-val
 
 **Cumulative**: 23 alert tasks created across all heartbeats. ~117 unowned deals still without alert tasks.
 
+### Alert Tasks — 2026-04-24 Batch (heartbeat 16:29 UTC)
+| Task ID | Deal | Deal ID | Amount | Stage |
+|---|---|---|---|---|
+| 108650426282 | Dorbren Security LLC | 42673771906 | $5,395.50 | Nurturing |
+| 108642120351 | Paradime Networks LLC | 44951255678 | $4,995 | Nurturing |
+| 108640569975 | UTTER PRECISION, INC. | 46927014810 | $4,945.50 | Nurturing |
+| 108637150794 | Capitol Atlas Strategies LLC | 45334354471 | $4,945.50 | Nurturing |
+| 108625508674 | Chicago Embroidery Co. | 45988537718 | $4,945.50 | Nurturing |
+| 108635912787 | Relevant Finds LLC | 45977009276 | $4,490 | LTFU |
+| 108623804972 | Rose Nexus Group LLC | 44496452495 | $4,131 | Nurturing |
+| 108623958679 | Legacy Lane Enterprise LLC | 46566412440 | $4,041 | Nurturing |
+| 108623804974 | True Vision Trucking LLC | 46767531893 | $3,990 | Nurturing |
+| 108637767250 | ROBINSONCONSULTING | 46792516013 | $3,990 | Nurturing |
+
+**Cumulative**: 33 alert tasks created across all heartbeats. ~107 unowned deals still without alert tasks.
+
 ## Decisions & Learnings
 - 2026-04-22: First heartbeat. Directory structure initialized. Baseline metrics established (later found to be incorrect due to stage filter bug).
 - 2026-04-22: Task backlog likely systemic (auto-generated call outcome tasks) — created approval request for human review before any bulk action.
@@ -176,3 +216,4 @@ Approval request filed: `approvals/2026-04-23-16-28-assign-owners-stale-high-val
 - 2026-04-23 (fourth heartbeat, 20:10 UTC): Pipeline grew to 1,441 total (+14 vs morning). Corrected overdue task epoch timestamp — prior counts used April 2025 cutoff; correct 2026 cutoff shows 1,601. Created 5 more alert tasks on next-tier unowned deals ($53,627.50). Total alerted: 8 tasks / $133,620. Batch workflow touch on several unowned Nurturing deals noted at 18:03-18:04 UTC — unknown cause, monitor. All 4 approvals still pending.
 - 2026-04-24 (first heartbeat, 00:23 UTC): Pipeline 1,449 (+8). Overdue tasks 1,636 (+35 with epoch shift). Created 5 more alert tasks on next-tier unowned deals: Arrow Route Direct, Veteran Tree Services, Obelisk Consulting, Baws Realty, Trial Equity (all $9,995 each, deal IDs in table above). All 5 confirmed still unowned. Batch 18:03-18:04 UTC modification still visible on these deals — ownership unchanged. 13 cumulative alert tasks. All 4 approvals still pending.
 - 2026-04-24 (second heartbeat, 04:08 UTC): Pipeline 1,450 (+1). Overdue tasks 1,636 (stable). Created 10 more alert tasks on next-tier unowned deals ($5,495–$9,685 each). Cumulative: 23 alert tasks / ~$201,055 total value alerted. 117 unowned deals remain without tasks. Batch 18:02–18:04 UTC touch pattern confirmed on 6 of 10 deals in this batch — all Nurturing stage; LTFU deals not affected. Pattern appears Nurturing-specific. All 4 approvals still pending; oldest (APR-2026-04-22-001) now 2+ days old.
+- 2026-04-24 (third heartbeat, 16:29 UTC): Pipeline 1,451 (+1). Overdue tasks 1,625 (−11 — reps completing tasks today). Created 10 more alert tasks on next-tier unowned deals ($3,990–$5,395 each). Cumulative: 33 alert tasks / ~$246,924 total value alerted. ~107 unowned deals remain without tasks. CRITICAL NEW FINDING: Third batch-modification event at 2026-04-24T12:11–12:12 UTC affects BOTH Nurturing AND LTFU stages (Relevant Finds LLC at LTFU confirmed) — prior assumption of "Nurturing-only" was wrong. Events are roughly daily (~18h apart). Hypothesis: a HubSpot workflow or integration is attempting an operation on unowned deals but failing silently. Recommend human investigation of deal workflow history (e.g., deal 45977009276). All 4 approvals still pending; APR-2026-04-22-001 and APR-2026-04-22-002 now >2 days old with no action.
