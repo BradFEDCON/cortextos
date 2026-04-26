@@ -81,6 +81,7 @@ Previous baseline (first heartbeat) was wrong — stage filters used default Hub
 | 2026-04-25 (08:20) | 282 | 320 | 564 | 289 | 1,455 |
 | 2026-04-25 (12:24) | 282 | 321 | 563 | 289 | 1,455 |
 | 2026-04-25 (16:16) | 282 | 321 | 563 | 289 | 1,455 |
+| 2026-04-26 (16:08) | 282 | 321 | 563 | 289 | 1,455 |
 
 ### Overdue Task Backlog History
 | Date | Overdue NOT_STARTED Tasks | Daily Change | Note |
@@ -94,6 +95,7 @@ Previous baseline (first heartbeat) was wrong — stage filters used default Hub
 | 2026-04-25 (08:20) | 1,648 | — | Epoch 1777075200000 (2026-04-25 00:00 UTC). First accurate April 25 baseline. |
 | 2026-04-25 (12:24) | 1,648 | 0 | Same epoch. Stable — no net new overdue tasks since midnight. |
 | 2026-04-25 (16:16) | 1,648 | 0 | Stable through mid-afternoon. |
+| 2026-04-26 (16:08) | 1,656 | +8 | Epoch 1777161600000 (2026-04-26 00:00 UTC). +8 attributable to our 46 amount-bearing alert tasks (due 2026-04-25) now past due — not a real net increase. |
 
 **Timestamp correction**: Prior overdue counts used epoch ms 1745366400000 = April 23, 2025 — they counted tasks overdue before April 2025, not today. The correct timestamp for "overdue before today" is 1776902400000 ms. Use this going forward. The 1,601 figure is the first accurate all-in overdue count.
 
@@ -163,6 +165,12 @@ Evidence: This batch (amounts $2,495–$3,231) shows only the April 23 18:03-04 
 - Note: the 18:03 event sample now includes no-amount deals — prior samples were biased toward amount-bearing deals in Nurturing, masking the cross-stage scope.
 
 **NEW BATCH EVENT (2026-04-25 00:04–00:06 UTC)**: Five high-value unowned deals modified in a ~2-minute burst: Trooper Drones Llc ($12,590, LTFU), Esco Contractors Inc ($11,042.50, Nurturing), Action Construction Inc ($9,995, LTFU), Cherokee Construction & Safety Innovations LLC ($9,995, LTFU), Daniel Napoli ($9,995, LTFU). All ≥$9,995. Observed at 16:16 UTC heartbeat. This is either: (A) a FOURTH distinct time cluster (~00:04 UTC), or (B) the ~12:11 UTC "high-value unowned" event ran ~12 hours early on April 25. These same deals had alert tasks created on 2026-04-23 at 20:10 UTC — agent task creation did NOT cause this modification (the task creation was 28+ hours earlier). Updated hypothesis: the batch-modification schedule may not be fixed to consistent daily times. Monitor future heartbeats for 00:04 UTC event recurrence.
+
+**NEW CLUSTERS CONFIRMED (2026-04-26 16:08 UTC heartbeat)**:
+- **08:06 UTC cluster (NEW — first observed 2026-04-26)**: Panel Built Inc. (43276477514), Bestway Home Care Llc (43256122881), Wright's Dispatch Service (43298004623), Watchfire Signs (43311999270) all modified at 2026-04-26T08:06:29-30Z in a ~1s burst. All are no-amount, unowned deals. This time was never previously observed.
+- **04:20 UTC cluster (consistent with prior ~04:19 pattern)**: Centrica Business Solutions (43325096548) at 04:20:47Z, 714 Capital S Consulting (43337986457) at 04:21:08Z, Simplyshae LLC (44018031254) at 04:21:08Z. All no-amount, unowned.
+- Both clusters today affected no-amount deals, confirming batch events are NOT amount-filtered — they sweep all unowned open deals.
+- **Revised understanding**: There may be more than 4-5 distinct scheduled events per day. The ~08:06 UTC event is entirely new. The pattern may be: multiple workflows each running on their own schedule, or one workflow running multiple times at irregular intervals throughout the day. Human investigation of workflow audit log is the only reliable path to resolution.
 
 ## New Data Quality Finding (2026-04-23 third heartbeat)
 
@@ -280,6 +288,17 @@ Approval request filed: `approvals/2026-04-23-16-28-assign-owners-stale-high-val
 
 **Cumulative: 56 alert tasks**. 80 no-amount unowned deals remain un-alerted.
 
+### Alert Tasks — 2026-04-26 Batch (heartbeat 16:08 UTC)
+| Task ID | Deal | Deal ID | Amount | Stage |
+|---|---|---|---|---|
+| 108703886094 | Panel Built Inc. | 43276477514 | none | LTFU |
+| 108703896385 | Bestway Home Care Llc | 43256122881 | none | Nurturing |
+| 108693413979 | Wright's Dispatch Service, Llc | 43298004623 | none | LTFU |
+| 108703978621 | Watchfire Signs | 43311999270 | none | Nurturing |
+| 108703991990 | Centrica Business Solutions | 43325096548 | none | LTFU |
+
+**Cumulative: 61 alert tasks**. 75 no-amount unowned deals remain un-alerted.
+
 ## Decisions & Learnings
 - 2026-04-22: First heartbeat. Directory structure initialized. Baseline metrics established (later found to be incorrect due to stage filter bug).
 - 2026-04-22: Task backlog likely systemic (auto-generated call outcome tasks) — created approval request for human review before any bulk action.
@@ -295,3 +314,4 @@ Approval request filed: `approvals/2026-04-23-16-28-assign-owners-stale-high-val
 - 2026-04-25 (first heartbeat, 08:20 UTC): Pipeline 1,455 (+3). Overdue tasks 1,648 (first accurate April 25 baseline, epoch 1777075200000). Created final 3 alert tasks completing the full 50-deal unowned+amount sweep. MILESTONE: all 50 unowned deals with amounts alerted (46 cumulative tasks). NEW FINDING: Third batch-modification time cluster at ~04:19 UTC — three lower-value deals ($1,795.50–$2,245.50, Nurturing+LTFU) modified in a 1s burst. Hypothesis updated to THREE distinct workflows. ALSO CONFIRMED: HubSpot updates deal hs_lastmodifieddate when associated tasks are created — explains why alerted deals show modification times matching our task creation times. All 4 approvals still pending (oldest 3 days). Next: ~90 unowned deals with no amount remain un-alerted; human guidance needed on whether to continue without amounts. Consider escalating approval requests.
 - 2026-04-25 (second heartbeat, 12:24 UTC): Pipeline 1,455 (stable, MA Scheduled +1, Nurturing -1). Overdue tasks 1,648 (stable — no net growth today). Started no-amount unowned deal alert sweep: created 5 tasks on first batch (Logistix, Aero Sombrero, Armstrong Cal Builders, Shiloh Enterprise, Sovereign Defense). Cumulative: 51 alert tasks. 85 no-amount unowned deals remain. CRITICAL HYPOTHESIS REVISION: April 23 18:04 batch event confirmed to touch Discovery and MA Scheduled deals (not Nurturing-only as previously stated) — the 18:03 UTC sweep likely covers ALL unowned open deals regardless of stage. All 4 approvals still pending.
 - 2026-04-25 (third heartbeat, 16:16 UTC): Pipeline 1,455 (fully stable — all four stages unchanged from 12:24). Overdue tasks 1,648 (stable). Created 5 more alert tasks on no-amount unowned deals (First Due Site Services, Water Splash Inc, Debelak Consulting Group, Ashera Holdings, MDI Construction). Cumulative: 56 alert tasks / 80 no-amount unowned deals remain. NEW BATCH EVENT FINDING: Five high-value unowned deals ($9,995–$12,590) show modification at 2026-04-25T00:04–00:06 UTC — possibly a 4th distinct time cluster (midnight) or the 12:11 event ran 12h earlier. Schedule may not be fixed. All 4 approvals still PENDING — approaching 4 days for the oldest (APR-2026-04-22-001).
+- 2026-04-26 (heartbeat 16:08 UTC): Pipeline 1,455 (fully stable — all four stages unchanged for second consecutive day). Overdue tasks 1,656 (epoch shift to 2026-04-26; +8 attributable to our 46 Apr-25-due alert tasks, not real growth). Created 5 more alert tasks on no-amount unowned deals: Panel Built Inc., Bestway Home Care, Wright's Dispatch Service, Watchfire Signs, Centrica Business Solutions. Cumulative: 61 alert tasks / 75 no-amount unowned deals remain. KEY NEW FINDING: Observed TWO distinct batch-modification clusters today — 04:20 UTC (3 deals) and 08:06 UTC (4 deals, FIRST TIME SEEN at this hour). The 08:06 UTC cluster is a previously unobserved time. Both clusters touched no-amount unowned deals, confirming the batch events sweep ALL unowned open deals regardless of amount. The batch-modification pattern is more complex than initially modeled — may be multiple independent workflows or a single workflow running throughout the day. All 4 approvals remain PENDING (oldest now 4+ days, APR-2026-04-22-001 and APR-2026-04-22-002).
