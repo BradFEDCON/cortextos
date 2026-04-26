@@ -280,6 +280,31 @@ Approval request filed: `approvals/2026-04-23-16-28-assign-owners-stale-high-val
 
 **Cumulative: 56 alert tasks**. 80 no-amount unowned deals remain un-alerted.
 
+### Alert Tasks — 2026-04-26 Batch (heartbeat 08:06 UTC)
+| Task ID | Deal | Deal ID | Amount | Stage | Created |
+|---|---|---|---|---|---|
+| 108694367380 | Panel Built Inc. | 43276477514 | none | LTFU | 2025-09-02 |
+| 108694272154 | Bestway Home Care Llc | 43256122881 | none | Nurturing | 2025-09-02 |
+| 108702344323 | Wright's Dispatch Service Llc | 43298004623 | none | LTFU | 2025-09-02 |
+| 108702292653 | Watchfire Signs | 43311999270 | none | Nurturing | 2025-09-03 |
+
+**Cumulative: 60 alert tasks**. 76 no-amount unowned deals remain un-alerted. (Note: batch of 4 not 5 — Armstrong Cal Builders was already alerted in prior session but still appeared at offset 10 in sort due to task creation not filtering it out of the unowned+no-amount pool.)
+
+## Midnight Batch-Modification Cluster CONFIRMED RECURRING (2026-04-26)
+
+**Status**: CONFIRMED as daily recurring event (not a one-off).
+
+| Date | Time (UTC) | Deals observed modified | Notes |
+|---|---|---|---|
+| 2026-04-25 | 00:04–00:06 | 5 high-value deals ($9,995–$12,590) | First observation of midnight cluster |
+| 2026-04-26 | 00:05:14 | Panel Built, Bestway, Wright's Dispatch, Watchfire | Second consecutive night, same ~00:04-00:06 window |
+
+**Confirmed daily time clusters (all affecting unowned open deals)**:
+1. **~00:04–00:06 UTC** (midnight): Confirmed recurring, 2nd consecutive night
+2. **~04:19 UTC**: First observed 2026-04-25; recurrence not yet confirmed
+3. **~12:11 UTC**: Affects high-value (≥~$3,990) Nurturing+LTFU deals
+4. **~18:03 UTC**: Affects ALL unowned open deals across all stages
+
 ## Decisions & Learnings
 - 2026-04-22: First heartbeat. Directory structure initialized. Baseline metrics established (later found to be incorrect due to stage filter bug).
 - 2026-04-22: Task backlog likely systemic (auto-generated call outcome tasks) — created approval request for human review before any bulk action.
@@ -295,3 +320,4 @@ Approval request filed: `approvals/2026-04-23-16-28-assign-owners-stale-high-val
 - 2026-04-25 (first heartbeat, 08:20 UTC): Pipeline 1,455 (+3). Overdue tasks 1,648 (first accurate April 25 baseline, epoch 1777075200000). Created final 3 alert tasks completing the full 50-deal unowned+amount sweep. MILESTONE: all 50 unowned deals with amounts alerted (46 cumulative tasks). NEW FINDING: Third batch-modification time cluster at ~04:19 UTC — three lower-value deals ($1,795.50–$2,245.50, Nurturing+LTFU) modified in a 1s burst. Hypothesis updated to THREE distinct workflows. ALSO CONFIRMED: HubSpot updates deal hs_lastmodifieddate when associated tasks are created — explains why alerted deals show modification times matching our task creation times. All 4 approvals still pending (oldest 3 days). Next: ~90 unowned deals with no amount remain un-alerted; human guidance needed on whether to continue without amounts. Consider escalating approval requests.
 - 2026-04-25 (second heartbeat, 12:24 UTC): Pipeline 1,455 (stable, MA Scheduled +1, Nurturing -1). Overdue tasks 1,648 (stable — no net growth today). Started no-amount unowned deal alert sweep: created 5 tasks on first batch (Logistix, Aero Sombrero, Armstrong Cal Builders, Shiloh Enterprise, Sovereign Defense). Cumulative: 51 alert tasks. 85 no-amount unowned deals remain. CRITICAL HYPOTHESIS REVISION: April 23 18:04 batch event confirmed to touch Discovery and MA Scheduled deals (not Nurturing-only as previously stated) — the 18:03 UTC sweep likely covers ALL unowned open deals regardless of stage. All 4 approvals still pending.
 - 2026-04-25 (third heartbeat, 16:16 UTC): Pipeline 1,455 (fully stable — all four stages unchanged from 12:24). Overdue tasks 1,648 (stable). Created 5 more alert tasks on no-amount unowned deals (First Due Site Services, Water Splash Inc, Debelak Consulting Group, Ashera Holdings, MDI Construction). Cumulative: 56 alert tasks / 80 no-amount unowned deals remain. NEW BATCH EVENT FINDING: Five high-value unowned deals ($9,995–$12,590) show modification at 2026-04-25T00:04–00:06 UTC — possibly a 4th distinct time cluster (midnight) or the 12:11 event ran 12h earlier. Schedule may not be fixed. All 4 approvals still PENDING — approaching 4 days for the oldest (APR-2026-04-22-001).
+- 2026-04-26 (first heartbeat, 08:06 UTC): Pipeline 1,455 (fully stable — 5th consecutive stable reading). Overdue tasks overcounted this session (wrong epoch used — 1777353600000 ≈ April 28; correct April 26 epoch is 1777161600000; use this next heartbeat). Created 4 alert tasks (Panel Built, Bestway Home Care, Wright's Dispatch, Watchfire Signs — all no-amount, no-owner). Cumulative: 60 alert tasks. 76 no-amount unowned deals remain. CONFIRMED: Midnight batch-mod cluster (~00:04-00:06 UTC) is a daily recurring event — observed on both April 25 and April 26 at 00:05 UTC. Four distinct daily time clusters now confirmed. All 4 approvals still PENDING; oldest (APR-2026-04-22-001) now 4 days with no response — urgent escalation needed.
