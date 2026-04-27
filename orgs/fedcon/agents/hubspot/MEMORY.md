@@ -82,6 +82,7 @@ Previous baseline (first heartbeat) was wrong — stage filters used default Hub
 | 2026-04-25 (12:24) | 282 | 321 | 563 | 289 | 1,455 |
 | 2026-04-25 (16:16) | 282 | 321 | 563 | 289 | 1,455 |
 | 2026-04-26 (16:08) | 282 | 321 | 563 | 289 | 1,455 |
+| 2026-04-27 (12:26) | 282 | 321 | 563 | 289 | 1,455 |
 
 ### Overdue Task Backlog History
 | Date | Overdue NOT_STARTED Tasks | Daily Change | Note |
@@ -96,6 +97,7 @@ Previous baseline (first heartbeat) was wrong — stage filters used default Hub
 | 2026-04-25 (12:24) | 1,648 | 0 | Same epoch. Stable — no net new overdue tasks since midnight. |
 | 2026-04-25 (16:16) | 1,648 | 0 | Stable through mid-afternoon. |
 | 2026-04-26 (16:08) | 1,656 | +8 | Epoch 1777161600000 (2026-04-26 00:00 UTC). +8 attributable to our 46 amount-bearing alert tasks (due 2026-04-25) now past due — not a real net increase. |
+| 2026-04-27 (12:26) | 1,666 | +10 | Epoch 1777248000000 (2026-04-27 00:00 UTC). Slow steady growth; no human action on backlog approval yet. |
 
 **Timestamp correction**: Prior overdue counts used epoch ms 1745366400000 = April 23, 2025 — they counted tasks overdue before April 2025, not today. The correct timestamp for "overdue before today" is 1776902400000 ms. Use this going forward. The 1,601 figure is the first accurate all-in overdue count.
 
@@ -171,6 +173,11 @@ Evidence: This batch (amounts $2,495–$3,231) shows only the April 23 18:03-04 
 - **04:20 UTC cluster (consistent with prior ~04:19 pattern)**: Centrica Business Solutions (43325096548) at 04:20:47Z, 714 Capital S Consulting (43337986457) at 04:21:08Z, Simplyshae LLC (44018031254) at 04:21:08Z. All no-amount, unowned.
 - Both clusters today affected no-amount deals, confirming batch events are NOT amount-filtered — they sweep all unowned open deals.
 - **Revised understanding**: There may be more than 4-5 distinct scheduled events per day. The ~08:06 UTC event is entirely new. The pattern may be: multiple workflows each running on their own schedule, or one workflow running multiple times at irregular intervals throughout the day. Human investigation of workflow audit log is the only reliable path to resolution.
+
+**NEW CLUSTERS (2026-04-27 12:26 UTC heartbeat)**:
+- **00:23 UTC cluster**: Moore & Sons Outboard Motors-Self Gen (44977548143), Freedom Lifting Solutions (45148867391), Nilda Benitez Carrasquillo (45317782192) all show `hs_lastmodifieddate = 2026-04-27T00:23:36Z`. All no-amount, unowned. Consistent with the 2026-04-25T00:04 UTC midnight event — confirms a regular overnight sweep around 00:00–00:30 UTC.
+- **08:14 UTC cluster**: 714 Capital S Consulting (43337986457) and Simplyshae LLC (44018031254) both show `hs_lastmodifieddate = 2026-04-27T08:14:39Z`. All no-amount, unowned. Confirms the ~08:00–08:15 UTC hour is a recurring daily sweep (consistent with 2026-04-26T08:06 UTC).
+- **Pattern now established**: At minimum, sweeps occur daily around 00:00–00:30 UTC AND 08:00–08:15 UTC targeting all unowned open deals regardless of stage or amount. Additional intraday sweeps also confirmed (~04:20, ~12:11, ~18:03 UTC). Total confirmed sweep times: at least 5 per day.
 
 ## New Data Quality Finding (2026-04-23 third heartbeat)
 
@@ -299,6 +306,17 @@ Approval request filed: `approvals/2026-04-23-16-28-assign-owners-stale-high-val
 
 **Cumulative: 61 alert tasks**. 75 no-amount unowned deals remain un-alerted.
 
+### Alert Tasks — 2026-04-27 Batch (heartbeat 12:26 UTC)
+| Task ID | Deal | Deal ID | Amount | Stage |
+|---|---|---|---|---|
+| 108719394667 | 714 Capital S Consulting Llc | 43337986457 | none | LTFU |
+| 108694005649 | Simplyshae LLC | 44018031254 | none | Nurturing |
+| 108719299960 | Moore & Sons Outboard Motors-Self Gen | 44977548143 | none | Nurturing |
+| 108719470378 | Freedom Lifting Solutions, Llc | 45148867391 | none | MA Scheduled |
+| 108691470174 | Nilda Benitez Carrasquillo- NB Screens | 45317782192 | none | Nurturing |
+
+**Cumulative: 66 alert tasks**. ~70 no-amount unowned deals remain un-alerted. Due date set to 2026-04-30.
+
 ## Decisions & Learnings
 - 2026-04-22: First heartbeat. Directory structure initialized. Baseline metrics established (later found to be incorrect due to stage filter bug).
 - 2026-04-22: Task backlog likely systemic (auto-generated call outcome tasks) — created approval request for human review before any bulk action.
@@ -315,3 +333,4 @@ Approval request filed: `approvals/2026-04-23-16-28-assign-owners-stale-high-val
 - 2026-04-25 (second heartbeat, 12:24 UTC): Pipeline 1,455 (stable, MA Scheduled +1, Nurturing -1). Overdue tasks 1,648 (stable — no net growth today). Started no-amount unowned deal alert sweep: created 5 tasks on first batch (Logistix, Aero Sombrero, Armstrong Cal Builders, Shiloh Enterprise, Sovereign Defense). Cumulative: 51 alert tasks. 85 no-amount unowned deals remain. CRITICAL HYPOTHESIS REVISION: April 23 18:04 batch event confirmed to touch Discovery and MA Scheduled deals (not Nurturing-only as previously stated) — the 18:03 UTC sweep likely covers ALL unowned open deals regardless of stage. All 4 approvals still pending.
 - 2026-04-25 (third heartbeat, 16:16 UTC): Pipeline 1,455 (fully stable — all four stages unchanged from 12:24). Overdue tasks 1,648 (stable). Created 5 more alert tasks on no-amount unowned deals (First Due Site Services, Water Splash Inc, Debelak Consulting Group, Ashera Holdings, MDI Construction). Cumulative: 56 alert tasks / 80 no-amount unowned deals remain. NEW BATCH EVENT FINDING: Five high-value unowned deals ($9,995–$12,590) show modification at 2026-04-25T00:04–00:06 UTC — possibly a 4th distinct time cluster (midnight) or the 12:11 event ran 12h earlier. Schedule may not be fixed. All 4 approvals still PENDING — approaching 4 days for the oldest (APR-2026-04-22-001).
 - 2026-04-26 (heartbeat 16:08 UTC): Pipeline 1,455 (fully stable — all four stages unchanged for second consecutive day). Overdue tasks 1,656 (epoch shift to 2026-04-26; +8 attributable to our 46 Apr-25-due alert tasks, not real growth). Created 5 more alert tasks on no-amount unowned deals: Panel Built Inc., Bestway Home Care, Wright's Dispatch Service, Watchfire Signs, Centrica Business Solutions. Cumulative: 61 alert tasks / 75 no-amount unowned deals remain. KEY NEW FINDING: Observed TWO distinct batch-modification clusters today — 04:20 UTC (3 deals) and 08:06 UTC (4 deals, FIRST TIME SEEN at this hour). The 08:06 UTC cluster is a previously unobserved time. Both clusters touched no-amount unowned deals, confirming the batch events sweep ALL unowned open deals regardless of amount. The batch-modification pattern is more complex than initially modeled — may be multiple independent workflows or a single workflow running throughout the day. All 4 approvals remain PENDING (oldest now 4+ days, APR-2026-04-22-001 and APR-2026-04-22-002).
+- 2026-04-27 (heartbeat 12:26 UTC): Pipeline 1,455 (fully stable — third consecutive day with no change). Overdue tasks 1,666 (+10, epoch 1777248000000). Created 5 more alert tasks on no-amount unowned deals: 714 Capital S Consulting, Simplyshae LLC, Moore & Sons Outboard Motors-Self Gen, Freedom Lifting Solutions, Nilda Benitez Carrasquillo-NB Screens. Cumulative: 66 alert tasks / ~70 no-amount unowned deals remain. BATCH EVENT NOTE: Two new time clusters observed today — 00:23 UTC (3 deals: Moore & Sons, Freedom Lifting, Nilda Benitez) and 08:14 UTC (2 deals: 714 Capital, Simplyshae). The 08:14 UTC cluster is consistent with yesterday's 08:06 UTC cluster — this hour (~08:00–08:15 UTC) appears to be a recurring sweep event. The 00:23 UTC cluster is consistent with the prior 00:04 UTC midnight event, confirming a regular overnight sweep. Offset-based pagination for no-amount unowned deals is unreliable (sort order shifts as deals are touched); some deals from prior batches appeared at current offsets. All 4 approvals remain PENDING (oldest now 5+ days).
