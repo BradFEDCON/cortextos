@@ -83,6 +83,7 @@ Previous baseline (first heartbeat) was wrong — stage filters used default Hub
 | 2026-04-25 (16:16) | 282 | 321 | 563 | 289 | 1,455 |
 | 2026-04-26 (16:08) | 282 | 321 | 563 | 289 | 1,455 |
 | 2026-04-27 (12:26) | 282 | 321 | 563 | 289 | 1,455 |
+| 2026-04-27 (20:05) | 288 | 324 | 565 | 291 | 1,468 |
 
 ### Overdue Task Backlog History
 | Date | Overdue NOT_STARTED Tasks | Daily Change | Note |
@@ -98,6 +99,7 @@ Previous baseline (first heartbeat) was wrong — stage filters used default Hub
 | 2026-04-25 (16:16) | 1,648 | 0 | Stable through mid-afternoon. |
 | 2026-04-26 (16:08) | 1,656 | +8 | Epoch 1777161600000 (2026-04-26 00:00 UTC). +8 attributable to our 46 amount-bearing alert tasks (due 2026-04-25) now past due — not a real net increase. |
 | 2026-04-27 (12:26) | 1,666 | +10 | Epoch 1777248000000 (2026-04-27 00:00 UTC). Slow steady growth; no human action on backlog approval yet. |
+| 2026-04-27 (20:05) | 1,651 | **−15** | Same epoch. **First net-negative count in memory** — reps completed ~15 overdue tasks today. |
 
 **Timestamp correction**: Prior overdue counts used epoch ms 1745366400000 = April 23, 2025 — they counted tasks overdue before April 2025, not today. The correct timestamp for "overdue before today" is 1776902400000 ms. Use this going forward. The 1,601 figure is the first accurate all-in overdue count.
 
@@ -178,6 +180,9 @@ Evidence: This batch (amounts $2,495–$3,231) shows only the April 23 18:03-04 
 - **00:23 UTC cluster**: Moore & Sons Outboard Motors-Self Gen (44977548143), Freedom Lifting Solutions (45148867391), Nilda Benitez Carrasquillo (45317782192) all show `hs_lastmodifieddate = 2026-04-27T00:23:36Z`. All no-amount, unowned. Consistent with the 2026-04-25T00:04 UTC midnight event — confirms a regular overnight sweep around 00:00–00:30 UTC.
 - **08:14 UTC cluster**: 714 Capital S Consulting (43337986457) and Simplyshae LLC (44018031254) both show `hs_lastmodifieddate = 2026-04-27T08:14:39Z`. All no-amount, unowned. Confirms the ~08:00–08:15 UTC hour is a recurring daily sweep (consistent with 2026-04-26T08:06 UTC).
 - **Pattern now established**: At minimum, sweeps occur daily around 00:00–00:30 UTC AND 08:00–08:15 UTC targeting all unowned open deals regardless of stage or amount. Additional intraday sweeps also confirmed (~04:20, ~12:11, ~18:03 UTC). Total confirmed sweep times: at least 5 per day.
+
+**NEW CLUSTER (2026-04-27 20:05 UTC heartbeat)**:
+- **16:09 UTC cluster**: Prime Path Logistics Llc (42100302496), QTO SOLUTIONS (42634664549), Ronnie Smith On Site Excavation (42658411162), Yuppasoft Inc. (42715490384), and Action Plumbing and Heating (54260144726) all show `hs_lastmodifieddate = 2026-04-27T16:09:21-24Z`. All no-amount, unowned. This is a **new previously-unobserved time cluster** (~16:09 UTC). Total confirmed daily sweep clusters now: at least **6** (~00:23, ~04:20, ~08:14, ~12:11, ~16:09, ~18:03 UTC). The ~2-hour spacing between clusters is consistent with a single workflow running every ~2 hours throughout the day. Human workflow audit investigation remains the only reliable path to resolution.
 
 ## New Data Quality Finding (2026-04-23 third heartbeat)
 
@@ -317,6 +322,19 @@ Approval request filed: `approvals/2026-04-23-16-28-assign-owners-stale-high-val
 
 **Cumulative: 66 alert tasks**. ~70 no-amount unowned deals remain un-alerted. Due date set to 2026-04-30.
 
+### Alert Tasks — 2026-04-27 Batch (heartbeat 20:05 UTC)
+| Task ID | Deal | Deal ID | Amount | Stage |
+|---|---|---|---|---|
+| 108742851706 | Prime Path Logistics Llc | 42100302496 | none | MA Scheduled |
+| 108742590749 | QTO SOLUTIONS | 42634664549 | none | Nurturing |
+| 108742523417 | Ronnie Smith On Site Excavation, Llc | 42658411162 | none | MA Scheduled |
+| 108742988461 | Yuppasoft, Inc. | 42715490384 | none | Nurturing |
+| 108744337778 | Action Plumbing and Heating | 54260144726 | none | Discovery |
+
+**Cumulative: 71 alert tasks**. ~65 no-amount unowned deals remain un-alerted. Due date set to 2026-04-30.
+
+Note: Deals 42100302496–42715490384 were previously missed due to sort-order instability in prior offset-paginated queries. Surfaced by using hs_object_id ASCENDING sort. **Going forward, always sort by hs_object_id ASCENDING for unowned deal sweep to maintain stable pagination.**
+
 ## Decisions & Learnings
 - 2026-04-22: First heartbeat. Directory structure initialized. Baseline metrics established (later found to be incorrect due to stage filter bug).
 - 2026-04-22: Task backlog likely systemic (auto-generated call outcome tasks) — created approval request for human review before any bulk action.
@@ -334,3 +352,4 @@ Approval request filed: `approvals/2026-04-23-16-28-assign-owners-stale-high-val
 - 2026-04-25 (third heartbeat, 16:16 UTC): Pipeline 1,455 (fully stable — all four stages unchanged from 12:24). Overdue tasks 1,648 (stable). Created 5 more alert tasks on no-amount unowned deals (First Due Site Services, Water Splash Inc, Debelak Consulting Group, Ashera Holdings, MDI Construction). Cumulative: 56 alert tasks / 80 no-amount unowned deals remain. NEW BATCH EVENT FINDING: Five high-value unowned deals ($9,995–$12,590) show modification at 2026-04-25T00:04–00:06 UTC — possibly a 4th distinct time cluster (midnight) or the 12:11 event ran 12h earlier. Schedule may not be fixed. All 4 approvals still PENDING — approaching 4 days for the oldest (APR-2026-04-22-001).
 - 2026-04-26 (heartbeat 16:08 UTC): Pipeline 1,455 (fully stable — all four stages unchanged for second consecutive day). Overdue tasks 1,656 (epoch shift to 2026-04-26; +8 attributable to our 46 Apr-25-due alert tasks, not real growth). Created 5 more alert tasks on no-amount unowned deals: Panel Built Inc., Bestway Home Care, Wright's Dispatch Service, Watchfire Signs, Centrica Business Solutions. Cumulative: 61 alert tasks / 75 no-amount unowned deals remain. KEY NEW FINDING: Observed TWO distinct batch-modification clusters today — 04:20 UTC (3 deals) and 08:06 UTC (4 deals, FIRST TIME SEEN at this hour). The 08:06 UTC cluster is a previously unobserved time. Both clusters touched no-amount unowned deals, confirming the batch events sweep ALL unowned open deals regardless of amount. The batch-modification pattern is more complex than initially modeled — may be multiple independent workflows or a single workflow running throughout the day. All 4 approvals remain PENDING (oldest now 4+ days, APR-2026-04-22-001 and APR-2026-04-22-002).
 - 2026-04-27 (heartbeat 12:26 UTC): Pipeline 1,455 (fully stable — third consecutive day with no change). Overdue tasks 1,666 (+10, epoch 1777248000000). Created 5 more alert tasks on no-amount unowned deals: 714 Capital S Consulting, Simplyshae LLC, Moore & Sons Outboard Motors-Self Gen, Freedom Lifting Solutions, Nilda Benitez Carrasquillo-NB Screens. Cumulative: 66 alert tasks / ~70 no-amount unowned deals remain. BATCH EVENT NOTE: Two new time clusters observed today — 00:23 UTC (3 deals: Moore & Sons, Freedom Lifting, Nilda Benitez) and 08:14 UTC (2 deals: 714 Capital, Simplyshae). The 08:14 UTC cluster is consistent with yesterday's 08:06 UTC cluster — this hour (~08:00–08:15 UTC) appears to be a recurring sweep event. The 00:23 UTC cluster is consistent with the prior 00:04 UTC midnight event, confirming a regular overnight sweep. Offset-based pagination for no-amount unowned deals is unreliable (sort order shifts as deals are touched); some deals from prior batches appeared at current offsets. All 4 approvals remain PENDING (oldest now 5+ days).
+- 2026-04-27 (heartbeat 20:05 UTC): Pipeline 1,468 (+13 since 12:26 UTC — largest same-session jump in memory; all 4 stages grew). Overdue tasks 1,651 (−15 vs. 12:26 UTC, same epoch — **first net-negative count ever recorded, reps completing tasks**). Created 5 alert tasks on next unowned no-amount deals: Prime Path Logistics (42100302496), QTO SOLUTIONS (42634664549), Ronnie Smith On Site Excavation (42658411162), Yuppasoft Inc. (42715490384), Action Plumbing and Heating (54260144726). Cumulative: 71 alert tasks / ~65 no-amount unowned deals remain. QUERY METHOD IMPROVEMENT: Switched to hs_object_id ASCENDING sort — revealed 4 previously-missed deals in the 42M range that were skipped by prior sort-order-unstable pagination. Going forward, use hs_object_id ASCENDING for unowned deal sweep. NEW BATCH CLUSTER: 16:09 UTC — 5 unowned no-amount deals all modified at T16:09:21-24Z. Sixth confirmed daily cluster time. All 4 approvals remain PENDING (oldest now 5+ days).
