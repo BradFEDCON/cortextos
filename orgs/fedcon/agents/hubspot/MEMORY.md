@@ -87,6 +87,7 @@ Previous baseline (first heartbeat) was wrong — stage filters used default Hub
 | 2026-04-28 (00:35) | 288 | 322 | 564 | 292 | 1,466 |
 | 2026-04-28 (12:11) | 288 | 322 | 564 | 292 | 1,466 |
 | 2026-04-30 (00:31) | 298 | 331 | 559 | 300 | 1,488 |
+| 2026-04-30 (20:09) | 304 | 337 | 558 | 302 | 1,501 |
 
 ### Overdue Task Backlog History
 | Date | Overdue NOT_STARTED Tasks | Daily Change | Note |
@@ -106,6 +107,7 @@ Previous baseline (first heartbeat) was wrong — stage filters used default Hub
 | 2026-04-28 (00:35) | 1,681 | +30 | Epoch 1777334400000 (2026-04-28 00:00 UTC). +30 partially due to 1-day epoch shift — tasks due 2026-04-27 now overdue. Real daily inflow ~15–20. |
 | 2026-04-28 (12:11) | 1,681 | 0 | Same epoch. Stable — no reps completing overdue tasks so far today. |
 | 2026-04-30 (00:31) | 1,780 | +99 | Epoch 1777507200000 (2026-04-30 00:00 UTC). 2-day epoch shift from last count; real daily inflow ~15–20. No human action on backlog. |
+| 2026-04-30 (20:09) | 1,751 | **−29** | Same epoch (1777507200000). **Second net-negative count in memory** — reps completing overdue tasks. Prior net-negative: −15 on 2026-04-27 20:05 UTC. |
 
 **Timestamp correction**: Prior overdue counts used epoch ms 1745366400000 = April 23, 2025 — they counted tasks overdue before April 2025, not today. The correct timestamp for "overdue before today" is 1776902400000 ms. Use this going forward. The 1,601 figure is the first accurate all-in overdue count.
 
@@ -388,6 +390,19 @@ Note: All 5 deals are Discovery stage, createdate ~2026-01-21/22 (54M ID range).
 
 Note: US Foods and Pure Green Lawn were last modified 2026-04-28T11:41Z (11:41 sweep cluster). CONSOLIDATED P AND S INC, NEELKANTH ENTERPRISE, C last modified 2026-04-23T18:01Z — not touched by any subsequent sweep, possibly outside the sweep's working set (may have crossed an ID or date threshold).
 
+### Alert Tasks — 2026-04-30 Batch (heartbeat 20:09 UTC)
+| Task ID | Deal | Deal ID | Amount | Stage |
+|---|---|---|---|---|
+| 108985983886 | World Connection | 55059382655 | none | Discovery |
+| 108988328508 | VERSA-FLEX INC | 55075596427 | none | Discovery |
+| 108988290175 | ANGEL'S LANDING WING CO LLC | 55134018984 | none | Discovery |
+| 108986596678 | DECARLO MCKEITHAN INC | 55136138386 | none | Discovery |
+| 108986557481 | LIBERTY COMMONS NURSING AND REHABILITATION CENTER OF YADKIN COUNTY | 55148230747 | none | Discovery |
+
+**Cumulative: 93 alert tasks**. ~45 no-amount unowned deals remain un-alerted. Due date set to 2026-05-02. **Next batch: offset 45, `amount NOT_HAS_PROPERTY` filter, hs_object_id ASCENDING.**
+
+Note: All 5 deals are Discovery stage, createdate 2026-01-30 (55M ID range, late-January 2026 cohort). All show `hs_lastmodifieddate = 2026-04-30T08:28:55–57Z` — swept by the recurring ~08:28 UTC daily cluster this morning.
+
 **PAGINATION FIX (2026-04-28 12:11 UTC)**: Prior no-amount batches used offset on ALL unowned deals and filtered for no-amount ad hoc. This is unreliable — amount-bearing deals appear at mixed offsets. Corrected approach: always include `amount NOT_HAS_PROPERTY` filter in query. Clean filter confirms total no-amount unowned = 90; processed through offset 35 (5 batches × 5 = 25 from clean filter, plus 00:35 batch of 5 = 30, plus this batch of 5 = 35). The two Nurturing deals (Leyli & Co LLC, Orbis Techs LLC) found at mixed-query offset 30 were missed from the original 50-deal amount sweep — likely new deals that entered the pipeline with amounts after April 23.
 
 ## Decisions & Learnings
@@ -411,3 +426,4 @@ Note: US Foods and Pure Green Lawn were last modified 2026-04-28T11:41Z (11:41 s
 - 2026-04-28 (heartbeat 00:35 UTC): Pipeline 1,466 (−2; MA Scheduled −2, Nurturing −1, LTFU +1). Overdue tasks 1,681 (epoch 1777334400000; +30 due to epoch shift, real daily inflow ~15–20). Created 5 alert tasks on next unowned no-amount deals (54M ID range, all Discovery stage): TEN SPARROWS LLC, COCKTAILMENOT LLC, LEE STATEN INC, JSCSQUARE LLC, Power West Engineering LLC. Cumulative: 76 alert tasks / ~60 no-amount unowned deals remain. MIDNIGHT SWEEP CONFIRMED: All 25 previously-alerted deals at offset 0–24 show hs_lastmodifieddate 2026-04-28T00:02–00:05Z — consistent daily midnight batch-modification cluster. Next sweep: offset 30, hs_object_id ASCENDING. All 4 approvals remain PENDING (oldest now 6+ days).
 - 2026-04-28 (heartbeat 12:11 UTC): Pipeline 1,466 (fully stable — all 4 stages identical to 00:35 entry). Overdue tasks 1,681 (stable, no reps completing tasks yet today). Created 7 alert tasks: 2 missed amount-bearing Nurturing deals (Leyli & Co LLC + Orbis Techs LLC, $2,495 each) + 5 no-amount Discovery deals (Cowboy Aerospace, XLSIGMA, NARLY BIRD NEST, ALL-AMERICAN SEPTIC PUMPING, KOROL). Cumulative: 83 alert tasks / ~55 no-amount unowned deals remain. PAGINATION FIX: switched to explicit `amount NOT_HAS_PROPERTY` filter for no-amount sweep — clean query confirms total=90, processed 35 so far. NEW SWEEP CLUSTERS: 10:44 UTC (1 deal) and 11:41 UTC (2 deals) observed today — previously unobserved times. Total distinct confirmed daily sweep times now 8+. All 4 approvals remain PENDING (oldest now 6+ days).
 - 2026-04-30 (heartbeat 00:31 UTC): **~36h gap** — no successful heartbeat on 2026-04-29 (blocked/MCP disconnected). Pipeline 1,488 (+22 from last count) — largest observed inter-heartbeat growth; Discovery +10, MA Scheduled +9, LTFU +8, Nurturing −5. Overdue tasks 1,780 (epoch 1777507200000; +99 with 2-day epoch shift, real daily inflow ~15–20). Created 5 alert tasks on offset 35–39 no-amount unowned deals (all Discovery stage, Jan/late-Jan 2026 cohort). Cumulative: 88 alert tasks / ~50 no-amount unowned deals remain. SWEEP NOTE: 3 of 5 deals in this batch (CONSOLIDATED P AND S, NEELKANTH, C) show last modification 2026-04-23T18:01Z — not touched by any subsequent automated sweep despite 7 days of confirmed daily sweep clusters. Possible the automated workflow only covers deals created before a certain date or ID range. All 4 approvals remain PENDING (oldest now 8 days). Escalation to Brad Egbert strongly recommended.
+- 2026-04-30 (heartbeat 20:09 UTC): Pipeline 1,501 (+13 since 00:31 UTC today) — strong same-day inflow, Discovery +6 and MA Scheduled +6. Overdue tasks 1,751 (−29 vs. same-epoch 00:31 count — **second net-negative in memory**, reps completing overdue tasks). Created 5 alert tasks on offset 40–44 no-amount unowned Discovery deals (55M ID range, Jan 30 2026 cohort). All 5 show last modification at 2026-04-30T08:28Z (today's sweep). Cumulative: 93 alert tasks / ~45 no-amount unowned deals remain. All 4 approvals still PENDING (oldest 8+ days).
